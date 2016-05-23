@@ -34,13 +34,26 @@ import org.liukan.mgraph.util.strUtil;
 
 import com.mxgraph.canvas.mxICanvas;
 import com.mxgraph.canvas.mxImageCanvas;
+import com.mxgraph.layout.mxCircleLayout;
+import com.mxgraph.layout.mxCompactTreeLayout;
+import com.mxgraph.layout.mxEdgeLabelLayout;
+import com.mxgraph.layout.mxFastOrganicLayout;
+import com.mxgraph.layout.mxGraphLayout;
+import com.mxgraph.layout.mxIGraphLayout;
+import com.mxgraph.layout.mxOrganicLayout;
+import com.mxgraph.layout.mxParallelEdgeLayout;
+import com.mxgraph.layout.mxStackLayout;
+import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
+import com.mxgraph.layout.orthogonal.mxOrthogonalLayout;
 import com.mxgraph.model.mxCell;
+import com.mxgraph.model.mxGeometry;
 import com.mxgraph.model.mxICell;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.swing.handler.mxKeyboardHandler;
 import com.mxgraph.swing.handler.mxRubberband;
 import com.mxgraph.swing.view.mxInteractiveCanvas;
 import com.mxgraph.util.mxConstants;
+import com.mxgraph.util.mxRectangle;
 import com.mxgraph.view.mxCellState;
 import com.mxgraph.view.mxGraph;
 import com.mxgraph.view.mxStylesheet;
@@ -54,6 +67,7 @@ public class mgraphx extends JPanel {
 	private boolean mouseModeAddNode,mouseModeAddEdge,nodesConnectable;
 	private int fontSize, nodeFontSize;
 	private mxGraph graph ;
+	public double dx,dy;
 	ArrayList<mxCell> tmpCellList;
 	Object parent;
 	mxGraphComponent graphComponent;
@@ -100,6 +114,7 @@ public class mgraphx extends JPanel {
 	
 	public mgraphx(boolean _nodesConnectable) {
 		super();
+		dx=0;dy=0;
 		selectedNodeNum=0;
 		graph=null;
 		mouseModeAddNode = false;
@@ -157,6 +172,7 @@ public class mgraphx extends JPanel {
 		};
 
 		add(graphComponent);
+
 
 		// Adds rubberband selection
 		new mxRubberband(graphComponent);
@@ -217,14 +233,57 @@ public class mgraphx extends JPanel {
 	public mgraphx(){
 		this(true);
 	}
-	
+	public void hLayout(){
+	    mxIGraphLayout layout = new mxHierarchicalLayout(graph);
+        layout.execute(graph.getDefaultParent());
+       
+	}
+	public void labelLayout(){
+		mxIGraphLayout layout = new mxEdgeLabelLayout(graph);
+    	layout.execute(graph.getDefaultParent());
+	}
+	public void centerGraph(){
+		 //Before you add a vertex/edge to graph, get the size of layout
+		graph.getModel().beginUpdate();
+	    double widthLayout = graphComponent.getLayoutAreaSize().getWidth();
+	    double heightLayout = graphComponent.getLayoutAreaSize().getHeight();
+	    Object[] roots = graph.getChildCells(graph.getDefaultParent(),true,false);
+	    //if you are done with adding vertices/edges,
+	    //we need to determine the size of the graph
 
+	    double width = graph.getGraphBounds().getWidth();
+	    double height = graph.getGraphBounds().getHeight();
+	    graph.moveCells(roots, (widthLayout - width)/2, (heightLayout - height)/2,false);
+	    /*//set new geometry
+	    for (int i = 0; i < roots.length; i++) {
+	        Object root = roots[i];
+	        mxGeometry geometry = graph.getModel().getGeometry(root); 
+	        if(geometry!=null){
+	    geometry = (mxGeometry) geometry.clone(); 
+	    geometry.setX(geometry.getX()+(widthLayout - width)/2);
+	    geometry.setY(geometry.getY()+(heightLayout - height)/2);
+	    graph.getModel().setGeometry(root, geometry);
+	        }
+	    }*/
+	    graph.getModel().endUpdate();
+	   /* double width = graph.getGraphBounds().getWidth();
+	    double height = graph.getGraphBounds().getHeight();
+
+	    //set new geometry
+	    graph.getModel().setGeometry(graph.getDefaultParent(), 
+	            new mxGeometry((widthLayout - width)/2, (heightLayout - height)/2,
+	                    widthLayout, heightLayout));
+	    graph.getModel().endUpdate();
+	    dx=dx-(widthLayout - width)/2;
+	    dy=dy-(heightLayout - height)/2;*/
+	    peLayout();
+	}
 	public Object  addNode(String ls,int x,int y){
 		graph.getModel().beginUpdate();
 		Object v1=null;
 		try {
 			strParts sp= strUtil.treatString(ls,nodeFontSize);					
-			v1 = graph.insertVertex(parent, null, ls, x, y,sp.maxlen ,sp.h);			
+			v1 = graph.insertVertex(parent, null, ls, x+dx, y+dy,sp.maxlen ,sp.h);			
 			//graph.updateCellSize(v1);
 			
 		} finally {
@@ -345,5 +404,50 @@ public class mgraphx extends JPanel {
 		frame.setSize(600, 820);
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
+	}
+
+	public void cLayout() {
+		// TODO Auto-generated method stub
+		mxIGraphLayout layout = new mxCircleLayout(graph);
+	    layout.execute(graph.getDefaultParent());	       
+	}
+
+	public void tLayout() {
+		// TODO Auto-generated method stub
+		mxIGraphLayout layout = new mxCompactTreeLayout(graph);
+	    layout.execute(graph.getDefaultParent());	  
+	}
+
+	public void oLayout() {
+		// TODO Auto-generated method stub
+			  
+		mxIGraphLayout layout = new mxOrganicLayout(graph);
+	    layout.execute(graph.getDefaultParent());
+		
+	}
+
+	public void peLayout() {
+		// TODO Auto-generated method stub
+		mxIGraphLayout layout = new mxParallelEdgeLayout(graph);
+	    layout.execute(graph.getDefaultParent());
+		
+		
+	}
+
+	public void foLayout() {
+		mxIGraphLayout layout = new mxFastOrganicLayout(graph);
+	    layout.execute(graph.getDefaultParent());
+		
+		
+	}
+
+	public void sLayout() {
+		mxIGraphLayout layout = new mxStackLayout(graph);
+	    layout.execute(graph.getDefaultParent());
+	}
+
+	public void orLayout() {
+		mxIGraphLayout layout = new mxOrthogonalLayout(graph);
+	    layout.execute(graph.getDefaultParent());	
 	}
 }

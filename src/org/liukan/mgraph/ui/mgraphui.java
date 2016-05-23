@@ -10,6 +10,8 @@ import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JMenu;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class mgraphui extends JPanel {
 
@@ -41,7 +43,18 @@ public class mgraphui extends JPanel {
 		menuBar.add(Menu);
 		
 		JMenuItem menuVx = new JMenuItem("垂直布局");
+		menuVx.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+			}
+		});
 		Menu.add(menuVx);
+		
+		JMenuItem menuCircle = new JMenuItem("环形布局");
+		menuCircle.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
+		Menu.add(menuCircle);
 
 	}
 	public static void main(String[] args)

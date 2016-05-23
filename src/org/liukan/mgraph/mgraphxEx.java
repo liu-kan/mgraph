@@ -63,7 +63,7 @@ public class mgraphxEx extends JPanel
 			public void actionPerformed(ActionEvent arg0) {
 				if (btnNewNodeButton.getText().equals("进入添加节点模式")) {
 					gpanel.setMouseModeAddNode(true);
-					gpanel.removeSelectedCells();
+					gpanel.removeSelectionCells();
 					btnNewNodeButton.setText("进入浏览模式");
 				} else {
 					gpanel.setMouseModeAddNode(false);
@@ -110,8 +110,63 @@ public class mgraphxEx extends JPanel
 		menuBar.add(Menu);
 		
 		JMenuItem menuVx = new JMenuItem("垂直布局");
+		menuVx.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				gpanel.hLayout();
+				gpanel.centerGraph();
+			}
+		});
 		Menu.add(menuVx);
-
+		JMenuItem menuCircle = new JMenuItem("环形布局");
+		menuCircle.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				gpanel.cLayout();
+				gpanel.centerGraph();
+			}
+		});
+		Menu.add(menuCircle);
+		JMenuItem menuTree= new JMenuItem("树布局");
+		menuTree.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				gpanel.tLayout();
+				gpanel.centerGraph();
+			}
+		});
+		Menu.add(menuTree);
+		JMenuItem menuFO= new JMenuItem("快速退火布局");
+		menuFO.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				gpanel.foLayout();
+				gpanel.centerGraph();
+			}
+		});
+		Menu.add(menuFO);
+		JMenuItem menuO= new JMenuItem("退火布局");
+		menuO.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				gpanel.oLayout();
+				gpanel.centerGraph();
+			}
+		});
+		Menu.add(menuO);		
+		
+		JMenuItem menuS= new JMenuItem("堆栈布局");
+		menuS.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				gpanel.sLayout();
+				gpanel.centerGraph();
+			}
+		});
+		Menu.add(menuS);	
+		
+		JMenuItem menuOr= new JMenuItem("正交布局");
+		menuOr.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				gpanel.orLayout();
+				gpanel.centerGraph();
+			}
+		});
+		Menu.add(menuOr);
 	}
 
 	public static void main(String[] args)
