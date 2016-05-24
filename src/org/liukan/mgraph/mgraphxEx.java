@@ -25,6 +25,7 @@ import javax.swing.JPanel;
 import javax.swing.border.BevelBorder;
 
 import org.liukan.mgraph.ui.mesDlgAddEdge;
+import org.liukan.mgraph.util.dbIO;
 
 import com.mxgraph.canvas.mxICanvas;
 import com.mxgraph.swing.mxGraphComponent;
@@ -44,13 +45,13 @@ public class mgraphxEx extends JPanel
 	 */
 	private static final long serialVersionUID = -844106998814982739L;
 	protected boolean hintAddEdge;
-
+	public mgraphx gpanel;
 	public mgraphxEx()
 	{
 		super();
 		hintAddEdge=true;
 		setLayout(new BorderLayout()); 
-		mgraphx gpanel = new mgraphx(false);
+		gpanel = new mgraphx(false);
 		add(gpanel, BorderLayout.CENTER);
 		
 		JPanel panel_button = new JPanel();
@@ -178,8 +179,29 @@ public class mgraphxEx extends JPanel
 		mgraphxEx c=new mgraphxEx();
 		c.setSize(580, 800);
 		
-		//frame.getContentPane().add(c,BorderLayout.CENTER);
-		//frame.getContentPane().add(new JButton("OK"),BorderLayout.SOUTH);
+		JPanel panel_button = new JPanel();
+		frame.add(panel_button, BorderLayout.SOUTH);
+		
+		JButton btnNewNodeButton = new JButton("readdb");
+		btnNewNodeButton.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				 try {
+				    	dbIO dbio=new dbIO("org.sqlite.JDBC","jdbc:sqlite:db.sqlite",null,null);	      
+				    	dbio.readGraph(1,c.gpanel);
+				    	dbio.close();
+				    	
+				    	//dbio=null;
+				    	//System.gc(); 
+				    } catch ( Exception e ) {
+				      System.err.println( e.getClass().getName() + ": " + e.getMessage() );
+				      System.exit(0);
+				    }
+			}
+
+		});
+		panel_button.add(btnNewNodeButton);
 		frame.getContentPane().add(c,BorderLayout.CENTER);
 		frame.pack();
 		//c.setSize(1000, 720);

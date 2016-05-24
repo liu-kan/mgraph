@@ -65,17 +65,28 @@ public class mgraphx extends JPanel {
 	 */
 	private static final long serialVersionUID = -844106998814982739L;
 	private boolean mouseModeAddNode,mouseModeAddEdge,nodesConnectable;
-	private int fontSize, nodeFontSize;
+	private int edgeFontSize, nodeFontSize;
 	private mxGraph graph ;
 	public double dx,dy;
 	ArrayList<mxCell> tmpCellList;
 	Object parent;
 	mxGraphComponent graphComponent;
 	private int selectedNodeNum;
+	public mxGraph getGraphX(){
+		return graph;
+	}
+	public void setupGraphStyle(int _edgeFontSize, int _nodeFontSize){
+		mxStylesheet stylesheet = new mxStylesheet();
+		edgeFontSize=_edgeFontSize;
+		nodeFontSize=_nodeFontSize;
+		mxConstants.DEFAULT_FONTSIZE = edgeFontSize;
+		setupGraph(stylesheet);
+		graph.setStylesheet(stylesheet);
+	}
+	
 	public void setupGraph(mxStylesheet stylesheet) {
 		// graph setup
-		fontSize=45;
-		nodeFontSize=22;
+		
 		Map<String, Object> edgeStyle = stylesheet.getDefaultEdgeStyle();
 		// edgeStyle.put(mxConstants.STYLE_NOLABEL, "1");
 		// edgeStyle.put(mxConstants.STYLE_STROKECOLOR, "000000");
@@ -104,16 +115,15 @@ public class mgraphx extends JPanel {
 		// stylesheet.putCellStyle(STYLENAME_PROCESS, processStyle);
 		// graph.setStylesheet(stylesheet);
 		
-		Hashtable<String, Object> style = new Hashtable<String, Object>();
-		style.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_RECTANGLE);
-		style.put(mxConstants.STYLE_OPACITY, 50);
-		style.put(mxConstants.STYLE_FONTCOLOR, "#774400");
-		stylesheet.putCellStyle("ROUNDED", style);
-		//return stylesheet;
 	}
 	
-	public mgraphx(boolean _nodesConnectable) {
+	public mgraphx(boolean _nodesConnectable){
+		this(_nodesConnectable,22,45);
+	}
+	public mgraphx(boolean _nodesConnectable,int _edgeFontSize, int _nodeFontSize) {
 		super();
+		edgeFontSize=_edgeFontSize;
+		nodeFontSize=_nodeFontSize;
 		dx=0;dy=0;
 		selectedNodeNum=0;
 		graph=null;
@@ -122,7 +132,7 @@ public class mgraphx extends JPanel {
 		nodesConnectable=_nodesConnectable;
 		tmpCellList=new ArrayList<mxCell>();
 		setLayout(new BorderLayout());
-		mxConstants.DEFAULT_FONTSIZE = 36;
+		mxConstants.DEFAULT_FONTSIZE = edgeFontSize;
 		mxStylesheet stylesheet = new mxStylesheet();
 		setupGraph(stylesheet);
 		graph = new mxGraph(stylesheet) {
@@ -243,17 +253,33 @@ public class mgraphx extends JPanel {
     	layout.execute(graph.getDefaultParent());
 	}
 	public void centerGraph(){
-		 //Before you add a vertex/edge to graph, get the size of layout
+		
 		graph.getModel().beginUpdate();
 	    double widthLayout = graphComponent.getLayoutAreaSize().getWidth();
 	    double heightLayout = graphComponent.getLayoutAreaSize().getHeight();
-	    Object[] roots = graph.getChildCells(graph.getDefaultParent(),true,false);
-	    //if you are done with adding vertices/edges,
-	    //we need to determine the size of the graph
-
-	    double width = graph.getGraphBounds().getWidth();
-	    double height = graph.getGraphBounds().getHeight();
-	    graph.moveCells(roots, (widthLayout - width)/2, (heightLayout - height)/2,false);
+	    Object[] nodes = graph.getChildCells(graph.getDefaultParent(),true,false);
+	    double mleft=widthLayout,mright=0,mtop=heightLayout,mb=0;
+	    for( Object node:nodes){
+	    	mxCell _node=(mxCell)node;
+	    	double left=_node.getGeometry().getX();//_node.getGeometry().getCenterX()-_node.getGeometry().getWidth()/2;
+	    	if(left<mleft)
+	    		mleft=left;
+	    	double right=_node.getGeometry().getX()+_node.getGeometry().getWidth();
+	    	if(right>mright)
+	    		mright=right;
+	    	double top=_node.getGeometry().getY();//_node.getGeometry().getCenterY()-_node.getGeometry().getHeight()/2;
+	    	if(top<mtop)
+	    		mtop=top;
+	    	double b=_node.getGeometry().getY()+_node.getGeometry().getHeight();
+	    	if(b>mb)
+	    		mb=b;
+	    	//System.out.println("top:"+top+",b:"+b);
+	    }
+	    //double width = graph.getGraphBounds().getWidth();
+	    //double height = graph.getGraphBounds().getHeight();
+	    double width =mright-mleft;
+	    double height=mb-mtop;
+	    graph.moveCells(nodes, (widthLayout - width)/2, (heightLayout - height)/2,false);
 	    /*//set new geometry
 	    for (int i = 0; i < roots.length; i++) {
 	        Object root = roots[i];
@@ -265,6 +291,7 @@ public class mgraphx extends JPanel {
 	    graph.getModel().setGeometry(root, geometry);
 	        }
 	    }*/
+	    
 	    graph.getModel().endUpdate();
 	   /* double width = graph.getGraphBounds().getWidth();
 	    double height = graph.getGraphBounds().getHeight();
@@ -277,13 +304,27 @@ public class mgraphx extends JPanel {
 	    dx=dx-(widthLayout - width)/2;
 	    dy=dy-(heightLayout - height)/2;*/
 	    peLayout();
+	    
 	}
 	public Object  addNode(String ls,int x,int y){
 		graph.getModel().beginUpdate();
 		Object v1=null;
 		try {
 			strParts sp= strUtil.treatString(ls,nodeFontSize);					
-			v1 = graph.insertVertex(parent, null, ls, x+dx, y+dy,sp.maxlen ,sp.h);			
+			v1 = graph.insertVertex(parent, null, ls, x, y,sp.maxlen*1.05 ,sp.h*1.05);			
+			//graph.updateCellSize(v1);
+			
+		} finally {
+			graph.getModel().endUpdate();
+		}
+		return v1;
+	}
+	public Object  addNode(String id,String ls,double x,double y){
+		graph.getModel().beginUpdate();
+		Object v1=null;
+		try {
+			strParts sp= strUtil.treatString(ls,nodeFontSize);					
+			v1 = graph.insertVertex(parent, id, ls, x, y,sp.maxlen*1.05 ,sp.h*1.05);			
 			//graph.updateCellSize(v1);
 			
 		} finally {
@@ -428,10 +469,22 @@ public class mgraphx extends JPanel {
 
 	public void peLayout() {
 		// TODO Auto-generated method stub
-		mxIGraphLayout layout = new mxParallelEdgeLayout(graph);
-	    layout.execute(graph.getDefaultParent());
-		
-		
+		//mxIGraphLayout layout = new mxParallelEdgeLayout(graph);
+	    //layout.execute(graph.getDefaultParent());
+		Object[] edges = graph.getChildCells(graph.getDefaultParent(),false,true);
+
+		    for(Object edge:edges){
+		    	graph.getModel().beginUpdate();
+		    	mxCell me=(mxCell)edge;
+		    	mxCell sc=(mxCell) me.getSource();
+		    	mxCell ec=(mxCell) me.getTarget();
+		    	String la=(String)me.getValue();
+		    	graph.removeCells(edges);
+		    	graph.getModel().endUpdate();
+
+		    	addEdge(la,sc,ec);
+		    }
+					
 	}
 
 	public void foLayout() {
