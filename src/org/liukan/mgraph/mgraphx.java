@@ -1,4 +1,9 @@
 package org.liukan.mgraph;
+/**
+* @author liukan
+* <a href="mailto:liukan@126.com">liukan@126.com</a>
+*  @version 0.1
+*/
 
 import java.awt.BorderLayout;
 import java.awt.Container;
@@ -12,6 +17,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Map;
@@ -26,9 +32,10 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.BevelBorder;
 
-import org.liukan.mgraph.test.CustomCanvas.SwingCanvas;
+//import org.liukan.mgraph.CustomCanvas.SwingCanvas;
 import org.liukan.mgraph.ui.editEdge;
 import org.liukan.mgraph.ui.editNote;
+import org.liukan.mgraph.util.dbIO;
 import org.liukan.mgraph.util.strParts;
 import org.liukan.mgraph.util.strUtil;
 
@@ -47,6 +54,7 @@ import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
 import com.mxgraph.layout.orthogonal.mxOrthogonalLayout;
 import com.mxgraph.model.mxCell;
 import com.mxgraph.model.mxGeometry;
+import com.mxgraph.model.mxGraphModel;
 import com.mxgraph.model.mxICell;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.swing.handler.mxKeyboardHandler;
@@ -75,6 +83,11 @@ public class mgraphx extends JPanel {
 	public mxGraph getGraphX(){
 		return graph;
 	}
+	/**
+	 * 
+	 * @param _edgeFontSize 设置边上标签的字体大小
+	 * @param _nodeFontSize 设置节点标签的字体大小
+	 */
 	public void setupGraphStyle(int _edgeFontSize, int _nodeFontSize){
 		mxStylesheet stylesheet = new mxStylesheet();
 		edgeFontSize=_edgeFontSize;
@@ -161,11 +174,7 @@ public class mgraphx extends JPanel {
 		graph.setAutoSizeCells(true);
 		graph.getModel().beginUpdate();
 		try {
-			Object v1 = graph.insertVertex(parent, null, "Hello", 20, 20, 100, 46);
-			Object v2 = graph.insertVertex(parent, null, "World!", 340, 250, 100, 46);
-			graph.insertEdge(parent, null, "Edge1", v1, v2);
-			graph.insertEdge(parent, null, "2", v1, v1);
-			graph.insertEdge(parent, null, "2Edge", v2, v1);
+			
 		} finally {
 			graph.getModel().endUpdate();
 		}
@@ -502,5 +511,65 @@ public class mgraphx extends JPanel {
 	public void orLayout() {
 		mxIGraphLayout layout = new mxOrthogonalLayout(graph);
 	    layout.execute(graph.getDefaultParent());	
+	}
+	public void readGfromDB(dbIO dbio,int gid){
+		graphStru gs=null;
+		try {
+			gs = dbio.readGraph(gid);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		if(gs==null){
+			System.out.println("No.:"+gid+" graph no found!");
+			return;	
+		}
+		if(gs.nodes.size()<1)
+			return;
+		graph.removeCells(graph.getChildVertices(graph.getDefaultParent()));
+		setupGraphStyle(gs.edgeFontSize,gs.nodeFontSize);
+		for(mnode node:gs.nodes){
+			addNode(node.id,node.label, node.x, node.y);
+		}
+		for(medge edge:gs.edges){
+			mxCell sc=(mxCell)((mxGraphModel) graph.getModel()).getCell(edge.source);
+	        mxCell ec=(mxCell)((mxGraphModel) graph.getModel()).getCell(edge.target);
+	        addEdge( edge.label,sc, ec);
+		}
+	}
+	public void saveG2DB(String name,int gid,dbIO dbio) throws SQLException{
+		graphStru gs=new graphStru();
+		gs.name=name;gs.edgeFontSize=edgeFontSize;
+		gs.nodeFontSize=nodeFontSize;
+		gs.id=gid;
+		Object[] nodes = graph.getChildCells(graph.getDefaultParent(),true,false);	    
+	    for( Object node:nodes){
+	    	mxCell _node=(mxCell)node;
+	    	double x=_node.getGeometry().getX();double y=_node.getGeometry().getY();
+	    	String label=_node.getValue().toString();
+	    	String id=_node.getId();
+	    	gs.addNode(id, label, x, y, gid);
+	    }
+	    Object[] edges = graph.getChildCells(graph.getDefaultParent(),false,true);	    
+	    for( Object edge:edges){
+	    	mxCell _edge=(mxCell)edge;
+	    	mxICell s=_edge.getSource();
+	    	String sid=s.getId(),tid=_edge.getTarget().getId(),id=_edge.getId();
+	    	String label=_edge.getValue().toString();
+	    	double w=1;
+	    	try{
+	    		w=Double.parseDouble(label);
+	    	}catch(java.lang.NumberFormatException e){
+	    		w=1;
+	    	}
+	    	gs.addEdge(id, label, w, sid, tid, gid);
+	    }
+	    try{ 
+	    	dbio.saveG2DB(gs);
+	    }catch(Exception e){
+	    	
+	    	e.printStackTrace();
+	    }
+	    
 	}
 }

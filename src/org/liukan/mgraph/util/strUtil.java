@@ -26,14 +26,14 @@ public class strUtil {
 			}
 			h=(int) (h*parts.length*1.0);
 			sp=new strParts(maxlen,h,parts);
-			System.out.println(tmp+","+h+','+parts);
+			//System.out.println(tmp+","+h+','+parts);
 			
 		} else {
 			
 			h=(int) (h*1.0);
 			int tmp=fm.stringWidth(str);
 			sp=new strParts(tmp,h,new String[]{str});
-			System.out.println(tmp+","+h+','+str);
+			//System.out.println(tmp+","+h+','+str);
 		}
 		return sp;
 		

@@ -1,4 +1,9 @@
 package org.liukan.mgraph;
+/**
+* @author liukan
+* <a href="mailto:liukan@126.com">liukan@126.com</a>
+*  @version 0.1
+*/
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -37,6 +42,9 @@ import com.mxgraph.view.mxCellState;
 import com.mxgraph.view.mxGraph;
 import com.mxgraph.view.mxStylesheet;
 
+/**
+ * @see mgraphx
+ */
 public class mgraphxEx extends JPanel 
 {
 
@@ -184,14 +192,16 @@ public class mgraphxEx extends JPanel
 		
 		JButton btnNewNodeButton = new JButton("readdb");
 		btnNewNodeButton.addActionListener(new ActionListener() {
-
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				 try {
 				    	dbIO dbio=new dbIO("org.sqlite.JDBC","jdbc:sqlite:db.sqlite",null,null);	      
-				    	dbio.readGraph(1,c.gpanel);
-				    	dbio.close();
+				    	//dbio.readGraph(1,c.gpanel);
+				    	c.gpanel.readGfromDB(dbio,2);
 				    	
+				    	//c.gpanel.hLayout();
+				    	//c.gpanel.centerGraph();
+				    	dbio.close();
 				    	//dbio=null;
 				    	//System.gc(); 
 				    } catch ( Exception e ) {
@@ -202,6 +212,29 @@ public class mgraphxEx extends JPanel
 
 		});
 		panel_button.add(btnNewNodeButton);
+		
+		JButton btnSaveButton = new JButton("savedb");
+		btnSaveButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				 try {
+				    	dbIO dbio=new dbIO("org.sqlite.JDBC","jdbc:sqlite:db.sqlite",null,null);	      
+				    	//dbio.readGraph(1,c.gpanel);
+				    	c.gpanel.saveG2DB("hoho",2,dbio);
+				    	
+				    	//c.gpanel.hLayout();
+				    	//c.gpanel.centerGraph();
+				    	dbio.close();
+				    	//dbio=null;
+				    	//System.gc(); 
+				    } catch ( Exception e ) {
+				      System.err.println( e.getClass().getName() + ": " + e.getMessage() );
+				      System.exit(0);
+				    }
+			}
+
+		});
+		panel_button.add(btnSaveButton);
 		frame.getContentPane().add(c,BorderLayout.CENTER);
 		frame.pack();
 		//c.setSize(1000, 720);
