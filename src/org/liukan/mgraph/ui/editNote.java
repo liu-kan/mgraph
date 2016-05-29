@@ -1,3 +1,6 @@
+/*
+ * 
+ */
 package org.liukan.mgraph.ui;
 
 import java.awt.BorderLayout;
@@ -16,22 +19,32 @@ import java.awt.event.ActionEvent;
 import javax.swing.JEditorPane;
 import java.awt.Font;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class editNote.
+ */
 public class editNote extends JDialog {
 
-	/**
-	 * 
-	 */
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 7619204469923640883L;
-	/**
-	 * 
-	 */
+	
+	/** The content panel. */
 	
 	private final JPanel contentPanel = new JPanel();
+	
+	/** The editor pane. */
 	private JEditorPane editorPane ;
+	
+	/** The rv. */
 	private static String rv=null;
+	
+	/** The semp. */
 	static Semaphore semp;
+	
 	/**
 	 * Launch the application.
+	 *
+	 * @param args the arguments
 	 */
 	public static void main(String[] args) {
 		try {
@@ -53,6 +66,12 @@ public class editNote extends JDialog {
 		}
 	    
 	}
+	
+	/**
+	 * Gets the node text.
+	 *
+	 * @return the node text
+	 */
 	public  String getNodeText() {
 		
 		String rv=editorPane.getText();

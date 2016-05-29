@@ -1,3 +1,6 @@
+/*
+ * 
+ */
 package org.liukan.mgraph.ui;
 
 import java.awt.BorderLayout;
@@ -32,17 +35,37 @@ import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class editEdge.
+ */
 public class editEdge extends JDialog {
 
+	/** The content panel. */
 	private final JPanel contentPanel = new JPanel();
+	
+	/** The button group. */
 	private final ButtonGroup buttonGroup = new ButtonGroup();
+	
+	/** The text field. */
 	public JTextField textField;
+	
+	/** The start node1. */
 	public JRadioButton startNode1;
+	
+	/** The cancel. */
 	public boolean cancel;
+	
+	/** The action. */
 	private final Action action = new SwingAction();
+	
+	/** The chckbx. */
 	private JCheckBox chckbx ;
+	
 	/**
 	 * Launch the application.
+	 *
+	 * @param args the arguments
 	 */
 	public static void main(String[] args) {
 		try {
@@ -56,14 +79,15 @@ public class editEdge extends JDialog {
 
 	/**
 	 * Create the dialog.
-	 * @param graph 
-	 * @param tmpCellList 
+	 *
+	 * @param graph the graph
+	 * @param tmpCellList the tmp cell list
 	 */
 	public editEdge(mxGraph graph, ArrayList<mxCell> tmpCellList) {
 		setTitle("编辑 边");
 		cancel=false;
 		setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
-		setBounds(100, 100, 547, 214);
+		setBounds(100, 100, 560, 243);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
@@ -168,11 +192,23 @@ public class editEdge extends JDialog {
 			}
 		}
 	}
+	
+	/**
+	 * The Class SwingAction.
+	 */
 	private class SwingAction extends AbstractAction {
+		
+		/**
+		 * Instantiates a new swing action.
+		 */
 		public SwingAction() {
 			putValue(NAME, "编辑连接权重(可输入浮点数)");
 			putValue(SHORT_DESCRIPTION, "如果边的权重不为1，可勾选编辑");
 		}
+		
+		/* (non-Javadoc)
+		 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+		 */
 		public void actionPerformed(ActionEvent e) {
 			textField.setEditable(chckbx.isSelected());
 		}

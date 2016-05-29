@@ -1,3 +1,6 @@
+/*
+ * 
+ */
 package org.liukan.mgraph.ui;
 
 import java.awt.BorderLayout;
@@ -21,12 +24,22 @@ import javax.swing.BoxLayout;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class mesDlgAddEdge.
+ */
 public class mesDlgAddEdge extends JDialog {
 
+	/** The content panel. */
 	private final JPanel contentPanel = new JPanel();
+	
+	/** The chckbx. */
 	public JCheckBox chckbx;
+	
 	/**
 	 * Launch the application.
+	 *
+	 * @param args the arguments
 	 */
 	public static void main(String[] args) {
 		try {

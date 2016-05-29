@@ -1,3 +1,6 @@
+/*
+ * 
+ */
 package org.liukan.mgraph.ui;
 
 import javax.swing.JPanel;
@@ -13,6 +16,10 @@ import javax.swing.JMenu;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class mgraphui.
+ */
 public class mgraphui extends JPanel {
 
 	/**
@@ -57,6 +64,12 @@ public class mgraphui extends JPanel {
 		Menu.add(menuCircle);
 
 	}
+	
+	/**
+	 * The main method.
+	 *
+	 * @param args the arguments
+	 */
 	public static void main(String[] args)
 	{
 		JFrame  frame = new JFrame();

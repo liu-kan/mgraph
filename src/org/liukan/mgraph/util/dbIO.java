@@ -1,3 +1,6 @@
+/*
+ * 
+ */
 package org.liukan.mgraph.util;
 
 import java.sql.*;
@@ -6,11 +9,33 @@ import org.liukan.mgraph.graphStru;
 import org.liukan.mgraph.medge;
 import org.liukan.mgraph.mnode;
 
-
+// TODO: Auto-generated Javadoc
+/**
+ * 负责从jdbc数据库读写图数据.
+ *
+ * @author liukan
+ * <a href="mailto:liukan@126.com">liukan@126.com</a>
+ * @version 0.1
+ */
 public class dbIO {
+	
+	/** The c. */
 	Connection c = null;
+	
+	/** The stmt. */
 	Statement stmt = null;
+	
+	/** The password. */
 	String driver,conn_url,username,password;
+	
+	/**
+	 * 构造函数，下面各参数以mysql为例.
+	 *
+	 * @param driver com.mysql.jdbc.Driver
+	 * @param conn_url jdbc:mysql://localhost/db_zlpj
+	 * @param username root
+	 * @param password wipm
+	 */
 	public dbIO(String driver,String conn_url,String username,
 			String password){
 		this.driver=driver;
@@ -19,9 +44,22 @@ public class dbIO {
 		conndb(driver, conn_url,username,
 				 password);
 	}
+	
+	/**
+	 * 已构造函数中设置的参数连接数据库.
+	 */
 	public void conndb(){
 		conndb(driver, conn_url,username,password);
 	}
+	
+	/**
+	 * 连接数据库，参数同构造函数.
+	 *
+	 * @param driver the driver
+	 * @param conn_url the conn_url
+	 * @param username the username
+	 * @param password the password
+	 */
 	public void conndb(String driver,String conn_url,String username,
 			String password){	
 		String connCMD = String.format("%s?user=%s&password=%s&useUnicode=true&characterEncoding=UTF8",conn_url,username, password);
@@ -38,40 +76,60 @@ public class dbIO {
 		      //System.exit(0);
 		    }
 	}
-	public boolean saveG2DB(graphStru gs)throws Exception{
+	
+	/**
+	 * 保存图像到数据库.
+	 *
+	 * @param gs 图像数据结构
+	 * @return 最终保存的图像编号
+	 * @throws Exception the exception
+	 */
+	public int saveG2DB(graphStru gs)throws Exception{
 		if(gs.id<0)
-			return false;
-		boolean rv=false;
+			return gs.id;		
 		try {
 			c.setAutoCommit(false);
 			
 			stmt=c.createStatement();
 			PreparedStatement statement=null;
-			ResultSet rs = stmt.executeQuery( "select * FROM graphs where id="+gs.id+";" );
-			
-			if (!rs.isBeforeFirst() ) {  
-				System.out.println("add G!");
-				String sql = "INSERT INTO graphs (id, name, edgeFontSize, nodeFontSize)" +
-				        "VALUES (?, ?, ?,?)";				
-				statement = c.prepareStatement(sql);
-				statement.setInt(1, gs.id);
-				statement.setString(2, gs.name);
-				statement.setInt(3, gs.edgeFontSize);
-				statement.setInt(4, gs.nodeFontSize);
-				statement.executeUpdate(); 
-				
-			} else{
-				System.out.println("update G!");
-				String sql = "UPDATE graphs SET edgeFontSize=?, nodeFontSize=?, name=? WHERE id=?";
-				 
-				statement = c.prepareStatement(sql);
-				statement.setInt(1, gs.edgeFontSize);
-				statement.setInt(2, gs.nodeFontSize);
-				statement.setString(3, gs.name);
-				statement.setInt(4, gs.id);
-				 
+			if(gs.id==0){
+				String sql = "INSERT INTO graphs ( name, edgeFontSize, nodeFontSize)" +
+				        "VALUES ( ?, ?,?)";	
+				statement = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+				statement.setString(1, gs.name);
+				statement.setInt(2, gs.edgeFontSize);
+				statement.setInt(3, gs.nodeFontSize);
 				statement.executeUpdate();
-			
+				ResultSet rs = statement.getGeneratedKeys();
+				gs.id = rs.getInt(1);
+				
+			}else{
+				ResultSet rs = stmt.executeQuery( "select * FROM graphs where id="+gs.id+";" );
+				
+				if (!rs.isBeforeFirst() ) {  
+					System.out.println("add G!");
+					String sql = "INSERT INTO graphs (id, name, edgeFontSize, nodeFontSize)" +
+					        "VALUES (?, ?, ?,?)";				
+					statement = c.prepareStatement(sql);
+					statement.setInt(1, gs.id);
+					statement.setString(2, gs.name);
+					statement.setInt(3, gs.edgeFontSize);
+					statement.setInt(4, gs.nodeFontSize);
+					statement.executeUpdate(); 
+					
+				} else{
+					System.out.println("update G!");
+					String sql = "UPDATE graphs SET edgeFontSize=?, nodeFontSize=?, name=? WHERE id=?";
+					 
+					statement = c.prepareStatement(sql);
+					statement.setInt(1, gs.edgeFontSize);
+					statement.setInt(2, gs.nodeFontSize);
+					statement.setString(3, gs.name);
+					statement.setInt(4, gs.id);
+					 
+					statement.executeUpdate();
+				
+				}
 			}
 			String sql = "DELETE FROM edges WHERE gid=?";			 
 			statement = c.prepareStatement(sql);
@@ -124,13 +182,22 @@ public class dbIO {
 		}  
 		catch(Exception e)
 		{
+			e.printStackTrace();
 		   c.rollback();
 		}
 		finally{
 			stmt.close();
 		}
-		return rv;
+		return gs.id;
 	}
+	
+	/**
+	 * 从数据库中读取图像到图像数据结构.
+	 *
+	 * @param _gid 图像在数据库中的id
+	 * @return 返回图像对应的数据结构
+	 * @throws SQLException the SQL exception
+	 */
 	public graphStru readGraph(int _gid/*,mgraphx _mgraphx*/) throws SQLException{
 		graphStru rv=new graphStru();
 		try {
@@ -194,6 +261,10 @@ public class dbIO {
 		//_mgraphx.hLayout();
 		return rv;
 	}
+	
+	/**
+	 * 关闭数据库连接在数据库不在使用时调用，应和conndb成对出现.
+	 */
 	public void close(){
 		 try {
 		    	
@@ -207,11 +278,21 @@ public class dbIO {
 		    	System.out.println("Have tried to close DB");
 		    }
 	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#finalize()
+	 */
 	protected void finalize( )
 	{
 	// finalization code here
 		 
 	}
+	
+	/**
+	 * Prints the sql exception.
+	 *
+	 * @param ex the ex
+	 */
 	public static void printSQLException(SQLException ex) {
 
 	    for (Throwable e : ex) {
@@ -239,6 +320,12 @@ public class dbIO {
 	        }
 	    }
 	}
+	
+	/**
+	 * 测试用途，库使用者无需理会.
+	 *
+	 * @param args the arguments
+	 */
 	 public static void main( String args[] )
 	  {
 	   

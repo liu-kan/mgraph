@@ -1,3 +1,6 @@
+/*
+ * 
+ */
 package org.liukan.mgraph.util;
 
 import java.awt.Font;
@@ -5,7 +8,19 @@ import java.awt.FontMetrics;
 
 import javax.swing.JLabel;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class strUtil.
+ */
 public class strUtil {
+	
+	/**
+	 * Treat string.
+	 *
+	 * @param str the str
+	 * @param nodeFontSize the node font size
+	 * @return the str parts
+	 */
 	public static strParts treatString(String str,int nodeFontSize){
 		strParts sp = null;
 		String[] parts;

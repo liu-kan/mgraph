@@ -1,59 +1,47 @@
+/*
+ * 
+ */
 package org.liukan.mgraph;
-/**
-* @author liukan
-* <a href="mailto:liukan@126.com">liukan@126.com</a>
-*  @version 0.1
-*/
+
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.FontMetrics;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.util.Map;
-
-import javax.swing.BorderFactory;
-import javax.swing.CellRendererPane;
 import javax.swing.JButton;
-import javax.swing.JComponent;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.border.BevelBorder;
-
 import org.liukan.mgraph.ui.mesDlgAddEdge;
 import org.liukan.mgraph.util.dbIO;
 
-import com.mxgraph.canvas.mxICanvas;
-import com.mxgraph.swing.mxGraphComponent;
-import com.mxgraph.swing.handler.mxKeyboardHandler;
-import com.mxgraph.swing.handler.mxRubberband;
-import com.mxgraph.swing.view.mxInteractiveCanvas;
-import com.mxgraph.util.mxConstants;
-import com.mxgraph.view.mxCellState;
-import com.mxgraph.view.mxGraph;
-import com.mxgraph.view.mxStylesheet;
-
+// TODO: Auto-generated Javadoc
 /**
+ * 继承JPanel并包含一个mgraphx控件，另外在底部配备常用的进行图编辑的按钮.
+ *
+ * @author liukan
+ * <a href="mailto:liukan@126.com">liukan@126.com</a>
+ * @version 0.1
  * @see mgraphx
  */
 public class mgraphxEx extends JPanel 
 {
 
-	/**
-	 * 
-	 */
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -844106998814982739L;
+	
+	/** The hint add edge. */
 	protected boolean hintAddEdge;
+
+	/** 被用来进行绘图的mgraphx控件. */	
 	public mgraphx gpanel;
+	
+	/**
+	 * Instantiates a new mgraphx ex.
+	 */
 	public mgraphxEx()
 	{
 		super();
@@ -84,6 +72,9 @@ public class mgraphxEx extends JPanel
 		panel_button.add(btnNewNodeButton);
 		
 		JButton btnNewEdgeButton = new JButton("点击添加边");
+/**
+ * 点击后可添加边		
+ */
 		btnNewEdgeButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {	
@@ -178,6 +169,11 @@ public class mgraphxEx extends JPanel
 		Menu.add(menuOr);
 	}
 
+/**
+ * 测试时使用，该控件的使用者无需理会.
+ *
+ * @param args the arguments
+ */
 	public static void main(String[] args)
 	{
 		JFrame  frame = new JFrame();
@@ -220,7 +216,7 @@ public class mgraphxEx extends JPanel
 				 try {
 				    	dbIO dbio=new dbIO("org.sqlite.JDBC","jdbc:sqlite:db.sqlite",null,null);	      
 				    	//dbio.readGraph(1,c.gpanel);
-				    	c.gpanel.saveG2DB("hoho",2,dbio);
+				    	c.gpanel.saveG2DB("hoho",0,dbio);
 				    	
 				    	//c.gpanel.hLayout();
 				    	//c.gpanel.centerGraph();

@@ -1,3 +1,6 @@
+/*
+ * 
+ */
 package org.liukan.mgraph;
 /**
 * @author liukan
@@ -6,12 +9,10 @@ package org.liukan.mgraph;
 */
 
 import java.awt.BorderLayout;
-import java.awt.Container;
-import java.awt.Dialog;
+
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Rectangle;
+
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -19,14 +20,13 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Hashtable;
+
 import java.util.Map;
 
 import javax.swing.BorderFactory;
 import javax.swing.CellRendererPane;
 import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JDialog;
+
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -40,20 +40,16 @@ import org.liukan.mgraph.util.strParts;
 import org.liukan.mgraph.util.strUtil;
 
 import com.mxgraph.canvas.mxICanvas;
-import com.mxgraph.canvas.mxImageCanvas;
 import com.mxgraph.layout.mxCircleLayout;
 import com.mxgraph.layout.mxCompactTreeLayout;
 import com.mxgraph.layout.mxEdgeLabelLayout;
 import com.mxgraph.layout.mxFastOrganicLayout;
-import com.mxgraph.layout.mxGraphLayout;
 import com.mxgraph.layout.mxIGraphLayout;
 import com.mxgraph.layout.mxOrganicLayout;
-import com.mxgraph.layout.mxParallelEdgeLayout;
 import com.mxgraph.layout.mxStackLayout;
 import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
 import com.mxgraph.layout.orthogonal.mxOrthogonalLayout;
 import com.mxgraph.model.mxCell;
-import com.mxgraph.model.mxGeometry;
 import com.mxgraph.model.mxGraphModel;
 import com.mxgraph.model.mxICell;
 import com.mxgraph.swing.mxGraphComponent;
@@ -61,30 +57,59 @@ import com.mxgraph.swing.handler.mxKeyboardHandler;
 import com.mxgraph.swing.handler.mxRubberband;
 import com.mxgraph.swing.view.mxInteractiveCanvas;
 import com.mxgraph.util.mxConstants;
-import com.mxgraph.util.mxRectangle;
 import com.mxgraph.view.mxCellState;
 import com.mxgraph.view.mxGraph;
 import com.mxgraph.view.mxStylesheet;
 
+// TODO: Auto-generated Javadoc
+/**
+ * 继承JPanel并在其上绘图.
+ *
+ * @author liukan
+ * <a href="mailto:liukan@126.com">liukan@126.com</a>
+ * @version 0.1
+ */
 public class mgraphx extends JPanel {
-
-	/**
-	 * 
-	 */
+	
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -844106998814982739L;
+	
+	/** The nodes connectable. */
 	private boolean mouseModeAddNode,mouseModeAddEdge,nodesConnectable;
+	
+	/** The node font size. */
 	private int edgeFontSize, nodeFontSize;
+	
+	/** The graph. */
 	private mxGraph graph ;
+	
+	/** The dy. */
 	public double dx,dy;
+	
+	/** The tmp cell list. */
 	ArrayList<mxCell> tmpCellList;
+	
+	/** The parent. */
 	Object parent;
+	
+	/** The graph component. */
 	mxGraphComponent graphComponent;
+	
+	/** The selected node num. */
 	private int selectedNodeNum;
+	
+	/**
+	 * Gets the graph x.
+	 *
+	 * @return the graph x
+	 */
 	public mxGraph getGraphX(){
 		return graph;
 	}
+	
 	/**
-	 * 
+	 * setupGraphStyle 用来设置图像的风格和字体大小.
+	 *
 	 * @param _edgeFontSize 设置边上标签的字体大小
 	 * @param _nodeFontSize 设置节点标签的字体大小
 	 */
@@ -97,7 +122,12 @@ public class mgraphx extends JPanel {
 		graph.setStylesheet(stylesheet);
 	}
 	
-	public void setupGraph(mxStylesheet stylesheet) {
+	/**
+	 * Sets the up graph.
+	 *
+	 * @param stylesheet the new up graph
+	 */
+	private void setupGraph(mxStylesheet stylesheet) {
 		// graph setup
 		
 		Map<String, Object> edgeStyle = stylesheet.getDefaultEdgeStyle();
@@ -130,9 +160,24 @@ public class mgraphx extends JPanel {
 		
 	}
 	
+	/**
+	 * mgraphx 构造函数.
+	 *
+	 * @param _nodesConnectable 设置是否可以通过鼠标直接点击节点添加边
+	 * @deprecated 
+	 */
 	public mgraphx(boolean _nodesConnectable){
 		this(_nodesConnectable,22,45);
 	}
+	
+	/**
+	 * mgraphx 构造函数.
+	 *
+	 * @param _nodesConnectable 设置是否可以通过鼠标直接点击节点添加边
+	 * @param _edgeFontSize 设置边上标签的字体大小
+	 * @param _nodeFontSize 设置节点标签的字体大小
+	 * @deprecated 
+	 */
 	public mgraphx(boolean _nodesConnectable,int _edgeFontSize, int _nodeFontSize) {
 		super();
 		edgeFontSize=_edgeFontSize;
@@ -249,18 +294,34 @@ public class mgraphx extends JPanel {
 			}
 		});
 	}
+	
+	/**
+	 * mgraphx 构造函数.
+	 */
 	public mgraphx(){
 		this(true);
 	}
+	
+	/**
+	 * hLayout 垂直方向自动布局.
+	 */
 	public void hLayout(){
 	    mxIGraphLayout layout = new mxHierarchicalLayout(graph);
         layout.execute(graph.getDefaultParent());
        
 	}
+	
+	/**
+	 * labelLayout 连接边的标签自动布局.
+	 */
 	public void labelLayout(){
 		mxIGraphLayout layout = new mxEdgeLabelLayout(graph);
     	layout.execute(graph.getDefaultParent());
 	}
+	
+	/**
+	 * centerGraph() 图像自动居中.
+	 */
 	public void centerGraph(){
 		
 		graph.getModel().beginUpdate();
@@ -315,6 +376,15 @@ public class mgraphx extends JPanel {
 	    peLayout();
 	    
 	}
+	
+	/**
+	 * addNode 向图像中添加节点.
+	 *
+	 * @param ls 节点标签
+	 * @param x 节点坐标x
+	 * @param y 节点坐标y
+	 * @return 返回被添加的节点
+	 */
 	public Object  addNode(String ls,int x,int y){
 		graph.getModel().beginUpdate();
 		Object v1=null;
@@ -328,6 +398,16 @@ public class mgraphx extends JPanel {
 		}
 		return v1;
 	}
+	
+	/**
+	 * addNode 向图像中添加节点.
+	 *
+	 * @param id 节点id
+	 * @param ls 节点标签
+	 * @param x 节点坐标x
+	 * @param y 节点坐标y
+	 * @return 返回被添加的节点
+	 */
 	public Object  addNode(String id,String ls,double x,double y){
 		graph.getModel().beginUpdate();
 		Object v1=null;
@@ -341,13 +421,26 @@ public class mgraphx extends JPanel {
 		}
 		return v1;
 	}
-	public class SwingCanvas extends mxInteractiveCanvas {
+	
+	/**
+	 * The Class SwingCanvas.
+	 */
+	private class SwingCanvas extends mxInteractiveCanvas {
+		
+		/** The renderer pane. */
 		protected CellRendererPane rendererPane = new CellRendererPane();
 
+		/** The vertex renderer. */
 		protected JLabel vertexRenderer = new JLabel();
 
+		/** The graph component. */
 		protected mxGraphComponent graphComponent;
 
+		/**
+		 * Instantiates a new swing canvas.
+		 *
+		 * @param graphComponent the graph component
+		 */
 		public SwingCanvas(mxGraphComponent graphComponent) {
 			this.graphComponent = graphComponent;
 
@@ -358,6 +451,12 @@ public class mgraphx extends JPanel {
 		}
 
 		
+		/**
+		 * Draw vertex.
+		 *
+		 * @param state the state
+		 * @param label the label
+		 */
 		public void drawVertex(mxCellState state, String label)
 		{
 			vertexRenderer.setText(label);
@@ -374,9 +473,21 @@ public class mgraphx extends JPanel {
 
 	}
 
+	/**
+	 * setMouseModeAddNode 设置mgraphx进入点击鼠标添加节点模式.
+	 *
+	 * @param e the new mouse mode add node
+	 */
 	public void setMouseModeAddNode(boolean e) {
 		mouseModeAddNode = e;
 	}
+	
+	/**
+	 * setMouseModeAddEdge 设置设置mgraphx进入点击鼠标添加边模式.
+	 *
+	 * @param e the new mouse mode add edge
+	 * @deprecated 
+	 */
 	public void setMouseModeAddEdge(boolean e) {
 		mouseModeAddEdge = e;
 		if(mouseModeAddEdge)
@@ -384,6 +495,10 @@ public class mgraphx extends JPanel {
 		else
 			graphComponent.setConnectable(mouseModeAddEdge);
 	}
+	
+	/**
+	 * removeSelectedCells 删除已选择的节点或边.
+	 */
 	public void removeSelectedCells(){
 		Object[] cells=graph.getSelectionCells();
 		graph.getModel().beginUpdate();
@@ -399,16 +514,33 @@ public class mgraphx extends JPanel {
 			graph.getModel().endUpdate();
 		}
 	}
+	
+	/**
+	 * 把已选节点或边设置为空.
+	 */
 	public void removeSelectionCells(){
 		Object[] cells=graph.getSelectionCells();
 		graph.removeSelectionCells(cells);		
 	}
+	
+	/**
+	 * 鼠标点选添加边的辅助函数，勿用！.
+	 */
 	public void selectTowNodes(){
 		//removeSelectionCells();
 		selectedNodeNum=0;
 		tmpCellList.clear();	
 		setMouseModeAddEdge(true);
 	}
+	
+	/**
+	 * 添加边.
+	 *
+	 * @param ls 边的标签
+	 * @param s 边的起始节点id
+	 * @param e 边的终止节点id
+	 * @return 返回边的对象
+	 */
 	public Object  addEdge(String ls,mxCell s,mxCell e){
 		graph.getModel().beginUpdate();
 		Object v1=null;
@@ -420,6 +552,12 @@ public class mgraphx extends JPanel {
 		}
 		return v1;
 	}
+	
+	/**
+	 * 测试时使用，该控件的使用者无需理会.
+	 *
+	 * @param args the arguments
+	 */
 	public static void main(String[] args) {
 		JFrame frame = new JFrame();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -456,18 +594,27 @@ public class mgraphx extends JPanel {
 		frame.setVisible(true);
 	}
 
+/**
+ * 自动环形布局.
+ */
 	public void cLayout() {
 		// TODO Auto-generated method stub
 		mxIGraphLayout layout = new mxCircleLayout(graph);
 	    layout.execute(graph.getDefaultParent());	       
 	}
 
+/**
+ * 自动树形布局.
+ */
 	public void tLayout() {
 		// TODO Auto-generated method stub
 		mxIGraphLayout layout = new mxCompactTreeLayout(graph);
 	    layout.execute(graph.getDefaultParent());	  
 	}
 
+/**
+ * 自动退火布局.
+ */
 	public void oLayout() {
 		// TODO Auto-generated method stub
 			  
@@ -476,6 +623,9 @@ public class mgraphx extends JPanel {
 		
 	}
 
+/**
+ * 对边进行重新布局.
+ */
 	public void peLayout() {
 		// TODO Auto-generated method stub
 		//mxIGraphLayout layout = new mxParallelEdgeLayout(graph);
@@ -496,6 +646,9 @@ public class mgraphx extends JPanel {
 					
 	}
 
+/**
+ * 自动快速退火布局.
+ */
 	public void foLayout() {
 		mxIGraphLayout layout = new mxFastOrganicLayout(graph);
 	    layout.execute(graph.getDefaultParent());
@@ -503,15 +656,28 @@ public class mgraphx extends JPanel {
 		
 	}
 
+/**
+ * 自动堆叠布局（不建议使用）.
+ */
 	public void sLayout() {
 		mxIGraphLayout layout = new mxStackLayout(graph);
 	    layout.execute(graph.getDefaultParent());
 	}
 
+/**
+ * 正交布局.
+ */
 	public void orLayout() {
 		mxIGraphLayout layout = new mxOrthogonalLayout(graph);
 	    layout.execute(graph.getDefaultParent());	
 	}
+	
+	/**
+	 * 从数据库读取特定图.
+	 *
+	 * @param dbio 数据库操作类实例
+	 * @param gid 图id
+	 */
 	public void readGfromDB(dbIO dbio,int gid){
 		graphStru gs=null;
 		try {
@@ -537,7 +703,19 @@ public class mgraphx extends JPanel {
 	        addEdge( edge.label,sc, ec);
 		}
 	}
-	public void saveG2DB(String name,int gid,dbIO dbio) throws SQLException{
+
+/**
+ * 保存图到数据库<br>
+ * 边的标签如果可以转换成double者会被作为边的权重<br>
+ * 否则的话边的权重为1.0
+ *
+ * @param name 图的名字，可以为""
+ * @param gid 图id（必须&gt;=0）,当id&gt;0函数将覆盖数据库中原gid对应的图，当id=0函数将自动保存到新图
+ * @param dbio 数据库操作类实例
+ * @return 返回所保存的gid的值
+ * @throws SQLException 抛出sql异常
+ */
+	public int saveG2DB(String name,int gid,dbIO dbio) throws SQLException{
 		graphStru gs=new graphStru();
 		gs.name=name;gs.edgeFontSize=edgeFontSize;
 		gs.nodeFontSize=nodeFontSize;
@@ -564,12 +742,13 @@ public class mgraphx extends JPanel {
 	    	}
 	    	gs.addEdge(id, label, w, sid, tid, gid);
 	    }
+	    int _gid=0;
 	    try{ 
-	    	dbio.saveG2DB(gs);
+	    	_gid=dbio.saveG2DB(gs);
 	    }catch(Exception e){
 	    	
 	    	e.printStackTrace();
 	    }
-	    
+	    return _gid;
 	}
 }
