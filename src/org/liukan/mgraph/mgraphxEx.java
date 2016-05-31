@@ -40,14 +40,28 @@ public class mgraphxEx extends JPanel
 	public mgraphx gpanel;
 	
 	/**
-	 * Instantiates a new mgraphx ex.
+	 * Instantiates a new mgraphx ex.<br>
+	 * 等于调用 mgraphxEx(false,22,45,false);
 	 */
-	public mgraphxEx()
+	public mgraphxEx(){
+		this(false,22,45,false);
+	}
+	/**
+	 * mgraphxEx构造函数
+	* @param _nodesConnectable 设置是否可以通过鼠标直接点击节点添加边
+	 * @param _edgeFontSize 设置边上标签的字体大小
+	 * @param _nodeFontSize 设置节点标签的字体大小
+	 * @param _centerNode 设置节点坐标是否是节点的中心位置
+	 * @see mgraphx
+	 */
+	public mgraphxEx(boolean _nodesConnectable,int _edgeFontSize, int _nodeFontSize
+			,boolean _centerNode)
 	{
 		super();
 		hintAddEdge=true;
 		setLayout(new BorderLayout()); 
-		gpanel = new mgraphx(false);
+		gpanel = new mgraphx(_nodesConnectable, _edgeFontSize,  _nodeFontSize
+				, _centerNode);
 		add(gpanel, BorderLayout.CENTER);
 		
 		JPanel panel_button = new JPanel();
@@ -205,7 +219,6 @@ public class mgraphxEx extends JPanel
 				      System.exit(0);
 				    }
 			}
-
 		});
 		panel_button.add(btnNewNodeButton);
 		
@@ -216,7 +229,7 @@ public class mgraphxEx extends JPanel
 				 try {
 				    	dbIO dbio=new dbIO("org.sqlite.JDBC","jdbc:sqlite:db.sqlite",null,null);	      
 				    	//dbio.readGraph(1,c.gpanel);
-				    	c.gpanel.saveG2DB("hoho",0,dbio);
+				    	c.gpanel.saveG2DB("hoho",2,dbio);
 				    	
 				    	//c.gpanel.hLayout();
 				    	//c.gpanel.centerGraph();

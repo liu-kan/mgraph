@@ -50,6 +50,7 @@ import com.mxgraph.layout.mxStackLayout;
 import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
 import com.mxgraph.layout.orthogonal.mxOrthogonalLayout;
 import com.mxgraph.model.mxCell;
+import com.mxgraph.model.mxGeometry;
 import com.mxgraph.model.mxGraphModel;
 import com.mxgraph.model.mxICell;
 import com.mxgraph.swing.mxGraphComponent;
@@ -98,6 +99,8 @@ public class mgraphx extends JPanel {
 	/** The selected node num. */
 	private int selectedNodeNum;
 	
+	private boolean centerNode;
+
 	/**
 	 * Gets the graph x.
 	 *
@@ -164,10 +167,10 @@ public class mgraphx extends JPanel {
 	 * mgraphx 构造函数.
 	 *
 	 * @param _nodesConnectable 设置是否可以通过鼠标直接点击节点添加边
-	 * @deprecated 
+	 *  
 	 */
 	public mgraphx(boolean _nodesConnectable){
-		this(_nodesConnectable,22,45);
+		this(_nodesConnectable,22,45,false);
 	}
 	
 	/**
@@ -176,10 +179,13 @@ public class mgraphx extends JPanel {
 	 * @param _nodesConnectable 设置是否可以通过鼠标直接点击节点添加边
 	 * @param _edgeFontSize 设置边上标签的字体大小
 	 * @param _nodeFontSize 设置节点标签的字体大小
-	 * @deprecated 
+	 * @param _centerNode 图中的节点坐标是否是节点的中心而不是左上角
+	 * 
 	 */
-	public mgraphx(boolean _nodesConnectable,int _edgeFontSize, int _nodeFontSize) {
+	public mgraphx(boolean _nodesConnectable,int _edgeFontSize, int _nodeFontSize
+			,boolean _centerNode) {
 		super();
+		centerNode=_centerNode;
 		edgeFontSize=_edgeFontSize;
 		nodeFontSize=_nodeFontSize;
 		dx=0;dy=0;
@@ -389,8 +395,13 @@ public class mgraphx extends JPanel {
 		graph.getModel().beginUpdate();
 		Object v1=null;
 		try {
-			strParts sp= strUtil.treatString(ls,nodeFontSize);					
-			v1 = graph.insertVertex(parent, null, ls, x, y,sp.maxlen*1.05 ,sp.h*1.05);			
+			strParts sp= strUtil.treatString(ls,nodeFontSize);	
+			double w=sp.maxlen*1.05;
+			double h=sp.h*1.05;
+			if(centerNode)
+				v1 = graph.insertVertex(parent, null, ls, x-w/2, y-h/2,w ,h);
+			else
+				v1 = graph.insertVertex(parent, null, ls, x, y,w ,h);			
 			//graph.updateCellSize(v1);
 			
 		} finally {
@@ -532,16 +543,36 @@ public class mgraphx extends JPanel {
 		tmpCellList.clear();	
 		setMouseModeAddEdge(true);
 	}
+
+	/**
+	 * 添加边.
+	 *
+	 * @param ls 边的标签
+	 * @param s 边的起始节点对象，可由addNode获得
+	 * @param e 边的终止节点对象，可由addNode获得
+	 * @return 返回边的对象
+	 */
+	public Object addEdge(String ls,Object s,Object e){
+		graph.getModel().beginUpdate();
+		Object v1=null;
+		try {
+			v1=graph.insertEdge(parent, null,ls, s, e);
+			
+		} finally {
+			graph.getModel().endUpdate();
+		}
+		return v1;
+	}
 	
 	/**
 	 * 添加边.
 	 *
 	 * @param ls 边的标签
-	 * @param s 边的起始节点id
-	 * @param e 边的终止节点id
+	 * @param s 边的起始节点对象，可由addNode强制转换获得
+	 * @param e 边的终止节点对象，可由addNode强制转换获得
 	 * @return 返回边的对象
 	 */
-	public Object  addEdge(String ls,mxCell s,mxCell e){
+	private Object  addEdge(String ls,mxCell s,mxCell e){
 		graph.getModel().beginUpdate();
 		Object v1=null;
 		try {
@@ -723,7 +754,15 @@ public class mgraphx extends JPanel {
 		Object[] nodes = graph.getChildCells(graph.getDefaultParent(),true,false);	    
 	    for( Object node:nodes){
 	    	mxCell _node=(mxCell)node;
-	    	double x=_node.getGeometry().getX();double y=_node.getGeometry().getY();
+	    	mxGeometry r = _node.getGeometry();
+	    	double x,y;
+	    	if(centerNode){
+	    		x=r.getCenterX();
+	    		y=r.getCenterY();
+	    	}else{
+	    		x=r.getX();
+	    		y=r.getY();
+	    	}
 	    	String label=_node.getValue().toString();
 	    	String id=_node.getId();
 	    	gs.addNode(id, label, x, y, gid);
