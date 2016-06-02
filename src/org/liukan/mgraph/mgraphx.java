@@ -12,7 +12,7 @@ import java.awt.BorderLayout;
 
 import java.awt.Dimension;
 import java.awt.Font;
-
+import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -285,8 +285,13 @@ public class mgraphx extends JPanel {
 						dialog.setLocation(x, y);
 						dialog.setVisible(true);						
 						String la=dialog.getNodeText();
-						if(la.length()>0)
-							addNode(la,e.getX(),e.getY());
+						if(la.length()>0){
+							//Object n=
+									addNode(la,e.getX(),e.getY());
+							//Rectangle r=getNodeRectangle(n);
+							//Rectangle r2=getNodeRectangle(((mxCell)n).getId());
+							//System.out.println("r"+r.getWidth()+"r2:"+r.getWidth());
+						}
 						else
 							System.out.println("No input!");
 					}
@@ -376,9 +381,42 @@ public class mgraphx extends JPanel {
 	    peLayout();
 	    
 	}
-	
 	/**
-	 * addNode 向图像中添加节点.
+	 * 获取节点的外形信息，
+	 * @param onode 节点对象，可通过addNode的返回值获得
+	 * @return Rectangle类型的返回值，通过调用getCenterX(),getCenterY()可得到节点的中心坐标<br>
+	 * 通过调用getWidth(),getHeight()可得到节点矩形的宽和高
+	 */
+	public Rectangle getNodeRectangle(Object onode){
+		Rectangle rect=null;
+		try{
+			mxCell _node=(mxCell)onode;
+			rect=_node.getGeometry().getRectangle();
+		}catch(Exception e){	    	
+	    	e.printStackTrace();
+	    }
+		return rect;	
+	}
+	/**
+	 * 获取节点的外形信息，
+	 * @param nid 节点id,String类型
+	 * @return Rectangle类型的返回值，通过调用getCenterX(),getCenterY()可得到节点的中心坐标<br>
+	 * 通过调用getWidth(),getHeight()可得到节点矩形的宽和高
+	 */
+	public  Rectangle getNodeRectangle(String nid){
+		Rectangle rect=null;
+		try{
+			mxCell _node=(mxCell)((mxGraphModel) graph.getModel()).getCell(nid);
+			rect=_node.getGeometry().getRectangle();
+		}catch(Exception e){	    	
+	    	e.printStackTrace();
+	    }
+		return rect;	
+	} 
+	/**
+	 * addNode 向图像中添加节点.自动添加节点id<br>
+	 * 如非明确知道正确的节点id尽量使用本函数，而不要使用<br>
+	 * addNode(String id,String ls,double x,double y)
 	 *
 	 * @param ls 节点标签
 	 * @param x 节点坐标x
