@@ -447,6 +447,34 @@ public class mgraphx extends JPanel {
 		}
 		return v1;
 	}
+	/**
+	 * addNode 向图像中添加节点.
+	 *
+	 * @param ls 节点标签
+	 * @param x 节点坐标x
+	 * @param y 节点坐标y
+	 * @param rw 指定节点的宽度
+	 * @param rh 指定节点的高度
+	 * @return 返回被添加的节点对象
+	 */
+	public Object  addNode(String ls,int x,int y,int rw,int rh){
+		graph.getModel().beginUpdate();
+		Object v1=null;
+		try {
+			//strParts sp= strUtil.treatString(ls,nodeFontSize);	
+			double w=rw;
+			double h=rh;
+			if(centerNode)
+				v1 = graph.insertVertex(parent, null, ls, x-w/2, y-h/2,w ,h);
+			else
+				v1 = graph.insertVertex(parent, null, ls, x, y,w ,h);			
+			//graph.updateCellSize(v1);
+			
+		} finally {
+			graph.getModel().endUpdate();
+		}
+		return v1;
+	}
 	
 	/**
 	 * addNode 向图像中添加节点.
@@ -461,14 +489,61 @@ public class mgraphx extends JPanel {
 		graph.getModel().beginUpdate();
 		Object v1=null;
 		try {
-			strParts sp= strUtil.treatString(ls,nodeFontSize);					
-			v1 = graph.insertVertex(parent, id, ls, x, y,sp.maxlen*1.05 ,sp.h*1.05);			
+			strParts sp= strUtil.treatString(ls,nodeFontSize);	
+			double w=sp.maxlen*1.05;
+			double h=sp.h*1.05;
+			if(centerNode)
+				v1 = graph.insertVertex(parent, id, ls, x-w/2, y-h/2,w ,h);
+			else
+				v1 = graph.insertVertex(parent, id, ls, x, y,w ,h);			
+			//graph.updateCellSize(v1);
+			
+		}finally {
+			graph.getModel().endUpdate();
+		}
+		return v1;
+	}
+	/**
+	 * addNode 向图像中添加节点.
+	 *
+	 * @param id 节点id
+	 * @param ls 节点标签
+	 * @param x 节点坐标x
+	 * @param y 节点坐标y
+	 * @param rw 指定节点的宽度
+	 * @param rh 指定节点的高度
+	 * @return 返回被添加的节点对象
+	 */
+	public Object  addNode(String id,String ls,int x,int y,int rw,int rh){
+		graph.getModel().beginUpdate();
+		Object v1=null;
+		try {
+			//strParts sp= strUtil.treatString(ls,nodeFontSize);	
+			double w=rw;
+			double h=rh;
+			if(centerNode)
+				v1 = graph.insertVertex(parent, id, ls, x-w/2, y-h/2,w ,h);
+			else
+				v1 = graph.insertVertex(parent, id, ls, x, y,w ,h);			
 			//graph.updateCellSize(v1);
 			
 		} finally {
 			graph.getModel().endUpdate();
 		}
 		return v1;
+	}
+	/**
+	 * 把元素的Z轴层叠坐标向下移动
+	 * @param back 向下(true)移动还是向上(false)移动
+	 * @param cells 被移动对象
+	 */
+	public void moveCellsZorder(boolean back, Object[] cells){
+		graph.getModel().beginUpdate();
+		try {
+			graph.orderCells(back, cells);
+		} finally {
+			graph.getModel().endUpdate();
+		}
 	}
 	
 	/**
@@ -571,7 +646,12 @@ public class mgraphx extends JPanel {
 		Object[] cells=graph.getSelectionCells();
 		graph.removeSelectionCells(cells);		
 	}
-	
+	/**
+	 * 删除图中的所有节点和边
+	 */
+	public void clearAllElements(){
+		graph.removeCells(graph.getChildVertices(graph.getDefaultParent()));
+	}
 	/**
 	 * 鼠标点选添加边的辅助函数，勿用！.
 	 */
