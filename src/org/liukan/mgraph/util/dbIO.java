@@ -32,7 +32,7 @@ public class dbIO {
 	 * 构造函数，下面各参数以mysql为例.
 	 *
 	 * @param driver com.mysql.jdbc.Driver
-	 * @param conn_url jdbc:mysql://localhost/db_zlpj
+	 * @param conn_url jdbc:mysql://192.168.0.2:3336/db_zlpj
 	 * @param username root
 	 * @param password wipm
 	 */
@@ -101,6 +101,11 @@ public class dbIO {
 				statement.setInt(3, gs.nodeFontSize);
 				statement.executeUpdate();
 				ResultSet rs = statement.getGeneratedKeys();
+				if (rs.next()) {
+					gs.id = rs.getInt(1);
+			    } else {
+			    	throw new java.sql.SQLException();
+			    }
 				gs.id = rs.getInt(1);
 				
 			}else{

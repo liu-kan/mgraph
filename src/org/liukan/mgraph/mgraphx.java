@@ -774,10 +774,12 @@ public class mgraphx extends JPanel {
 	    	String sid=s.getId(),tid=_edge.getTarget().getId(),id=_edge.getId();
 	    	String label=_edge.getValue().toString();
 	    	double w=1;
-	    	try{
-	    		w=Double.parseDouble(label);
-	    	}catch(java.lang.NumberFormatException e){
-	    		w=1;
+	    	if(label.length()>0){
+		    	try{
+		    		w=Double.parseDouble(label);
+		    	}catch(java.lang.NumberFormatException e){
+		    		w=1;
+		    	}
 	    	}
 	    	gs.addEdge(id, label, w, sid, tid, gid);
 	    }
