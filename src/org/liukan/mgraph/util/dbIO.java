@@ -27,6 +27,8 @@ public class dbIO {
 	
 	/** The password. */
 	String driver,conn_url,username,password;
+
+	private String whole_conn_url;
 	
 	/**
 	 * 构造函数，下面各参数以mysql为例.
@@ -44,7 +46,24 @@ public class dbIO {
 		conndb(driver, conn_url,username,
 				 password);
 	}
-	
+	public dbIO(String driver,String whole_conn_url){
+		this.driver=driver;
+		this.whole_conn_url=conn_url;
+		conndb(driver, whole_conn_url);
+	}
+	private void conndb(String driver2, String whole_conn_url2) {
+		try {
+		      Class.forName(driver2);		      
+		      c = DriverManager.getConnection(whole_conn_url2);
+		      //c.setAutoCommit(false);
+		      System.out.println("Opened database successfully");
+		    }
+		    catch ( Exception e ) {
+			      System.err.println( e.getClass().getName() + ": " + e.getMessage() );
+			      //System.exit(0);
+			    }
+		
+	}
 	/**
 	 * 已构造函数中设置的参数连接数据库.
 	 */
@@ -101,7 +120,9 @@ public class dbIO {
 				statement.setInt(3, gs.nodeFontSize);
 				statement.executeUpdate();
 				ResultSet rs = statement.getGeneratedKeys();
-				gs.id = rs.getInt(1);
+				if (rs.next()) {
+					gs.id = rs.getInt(1);
+				}
 				
 			}else{
 				ResultSet rs = stmt.executeQuery( "select * FROM graphs where id="+gs.id+";" );

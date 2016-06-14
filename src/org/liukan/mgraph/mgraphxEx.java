@@ -190,7 +190,7 @@ public class mgraphxEx extends JPanel
  */
 	public static void main(String[] args)
 	{
-		JFrame  frame = new JFrame();
+		JFrame  frame = new JFrame("XPLOR-NIH交联脚本生成器");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setLayout(new BorderLayout());
 		
@@ -200,7 +200,7 @@ public class mgraphxEx extends JPanel
 		JPanel panel_button = new JPanel();
 		frame.add(panel_button, BorderLayout.SOUTH);
 		
-		JButton btnNewNodeButton = new JButton("readdb");
+		JButton btnNewNodeButton = new JButton("生成脚本");
 		btnNewNodeButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -222,7 +222,7 @@ public class mgraphxEx extends JPanel
 		});
 		panel_button.add(btnNewNodeButton);
 		
-		JButton btnSaveButton = new JButton("savedb");
+		JButton btnSaveButton = new JButton("运行XPLOR");
 		btnSaveButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
