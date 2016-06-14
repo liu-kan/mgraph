@@ -60,7 +60,7 @@ public class editEdge extends JDialog {
 	private final Action action = new SwingAction();
 	
 	/** The chckbx. */
-	private JCheckBox chckbx ;
+	public JCheckBox chckbx ;
 	
 	/**
 	 * Launch the application.

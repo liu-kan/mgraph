@@ -267,8 +267,8 @@ public class dbIO {
 				         int gid = rs.getInt("gid");
 				         //mxCell sc=(mxCell)((mxGraphModel) _mgraphx.getGraphX().getModel()).getCell(source);
 				         //mxCell ec=(mxCell)((mxGraphModel) _mgraphx.getGraphX().getModel()).getCell(target);
-				         if(label.length()<1)
-				        	 label=String.valueOf(weight);
+				         //if(label.length()<1)
+				        	 //label=String.valueOf(weight);
 				         //_mgraphx.addEdge(label, sc, ec);
 				         rv.addEdge(id, label, weight, source, target, gid);			         
 				      }

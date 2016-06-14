@@ -101,12 +101,14 @@ public class mgraphx extends JPanel {
 	
 	private boolean centerNode;
 
+	private int edgeWidth;
+
 	/**
 	 * Gets the graph x.
 	 *
 	 * @return the graph x
 	 */
-	public mxGraph getGraphX(){
+	private mxGraph getGraphX(){
 		return graph;
 	}
 	
@@ -115,16 +117,20 @@ public class mgraphx extends JPanel {
 	 *
 	 * @param _edgeFontSize 设置边上标签的字体大小
 	 * @param _nodeFontSize 设置节点标签的字体大小
+	 * @param _edgeWidth 设置边宽度
 	 */
-	public void setupGraphStyle(int _edgeFontSize, int _nodeFontSize){
+	public void setupGraphStyle(int _edgeFontSize, int _nodeFontSize,int _edgeWidth){
 		mxStylesheet stylesheet = new mxStylesheet();
 		edgeFontSize=_edgeFontSize;
 		nodeFontSize=_nodeFontSize;
+		edgeWidth=_edgeWidth;
 		mxConstants.DEFAULT_FONTSIZE = edgeFontSize;
 		setupGraph(stylesheet);
 		graph.setStylesheet(stylesheet);
 	}
-	
+	public void setupGraphStyle(int _edgeFontSize, int _nodeFontSize){
+		setupGraphStyle(_edgeFontSize,_nodeFontSize,2);
+	}
 	/**
 	 * Sets the up graph.
 	 *
@@ -141,7 +147,7 @@ public class mgraphx extends JPanel {
 		// edgeStyle.put(mxConstants.STYLE_SHAPE, STYLE_SHAPE);
 		edgeStyle.put(mxConstants.STYLE_ROUNDED, "1");
 		//edgeStyle.put(mxConstants.STYLE_EDGE, mxConstants.EDGESTYLE_ENTITY_RELATION);
-
+		edgeStyle.put(mxConstants.STYLE_STROKEWIDTH,Integer.toString(edgeWidth));
 		// NODE STYLE
 		Map<String, Object> processStyle = stylesheet.getDefaultVertexStyle();
 		// Hashtable<String, Object> processStyle = new Hashtable<>();
@@ -188,6 +194,7 @@ public class mgraphx extends JPanel {
 		centerNode=_centerNode;
 		edgeFontSize=_edgeFontSize;
 		nodeFontSize=_nodeFontSize;
+		edgeWidth=2;
 		dx=0;dy=0;
 		selectedNodeNum=0;
 		graph=null;
@@ -269,12 +276,20 @@ public class mgraphx extends JPanel {
 									dialog.setLocation(x, y);
 									dialog.setVisible(true);				
 									if(!dialog.cancel){
-										if(dialog.startNode1.isSelected())
-											addEdge(dialog.textField.getText(),
+										if(dialog.startNode1.isSelected()){
+											String ls="";
+											if(dialog.chckbx.isSelected())
+												ls=dialog.textField.getText();
+											addEdge(ls,
 													tmpCellList.get(0),tmpCellList.get(1));
-										else
-											addEdge(dialog.textField.getText(),
+										}
+										else{
+											String ls="";
+											if(dialog.chckbx.isSelected())
+												ls=dialog.textField.getText();
+											addEdge(ls,
 													tmpCellList.get(1),tmpCellList.get(0));
+										}
 									}
 									removeSelectionCells();
 								}

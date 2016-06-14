@@ -207,7 +207,7 @@ public class mgraphxEx extends JPanel
 				 try {
 				    	dbIO dbio=new dbIO("org.sqlite.JDBC","jdbc:sqlite:db.sqlite",null,null);	      
 				    	//dbio.readGraph(1,c.gpanel);
-				    	c.gpanel.readGfromDB(dbio,2);
+				    	c.gpanel.readGfromDB(dbio,4);
 				    	
 				    	//c.gpanel.hLayout();
 				    	//c.gpanel.centerGraph();
@@ -229,7 +229,7 @@ public class mgraphxEx extends JPanel
 				 try {
 				    	dbIO dbio=new dbIO("org.sqlite.JDBC","jdbc:sqlite:db.sqlite",null,null);	      
 				    	//dbio.readGraph(1,c.gpanel);
-				    	c.gpanel.saveG2DB("hoho",2,dbio);
+				    	c.gpanel.saveG2DB("hoho",0,dbio);
 				    	
 				    	//c.gpanel.hLayout();
 				    	//c.gpanel.centerGraph();
