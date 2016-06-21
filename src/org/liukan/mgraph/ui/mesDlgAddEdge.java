@@ -10,6 +10,7 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+
 import javax.swing.JLabel;
 import java.awt.Font;
 import javax.swing.JCheckBox;
@@ -22,6 +23,7 @@ import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import javax.swing.BoxLayout;
 import java.awt.event.ActionListener;
+import java.util.ResourceBundle;
 import java.awt.event.ActionEvent;
 
 // TODO: Auto-generated Javadoc
@@ -35,12 +37,14 @@ public class mesDlgAddEdge extends JDialog {
 	
 	/** The chckbx. */
 	public JCheckBox chckbx;
-	
+
+	private ResourceBundle messagesRes;
 	/**
 	 * Launch the application.
 	 *
 	 * @param args the arguments
 	 */
+	/*
 	public static void main(String[] args) {
 		try {
 			mesDlgAddEdge dialog = new mesDlgAddEdge();
@@ -49,12 +53,15 @@ public class mesDlgAddEdge extends JDialog {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}*/
+	private String i18n(String s){
+		return messagesRes.getString(s);
 	}
-
 	/**
 	 * Create the dialog.
 	 */
-	public mesDlgAddEdge() {
+	public mesDlgAddEdge(ResourceBundle messagesRes) {
+		this.messagesRes=messagesRes;
 		setBounds(100, 100, 450, 125);
 		setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
 		getContentPane().setLayout(new BorderLayout());
@@ -62,7 +69,7 @@ public class mesDlgAddEdge extends JDialog {
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 		{
-			JLabel label = new JLabel("请在图中依次点选开始节点和结束节点");
+			JLabel label = new JLabel(i18n("mesDlgAddEdge.label"));
 			label.setFont(new Font("Dialog", Font.BOLD, 18));
 			contentPanel.add(label);
 		}
@@ -71,7 +78,7 @@ public class mesDlgAddEdge extends JDialog {
 			getContentPane().add(buttonPane, BorderLayout.SOUTH);
 			buttonPane.setLayout(new BoxLayout(buttonPane, BoxLayout.X_AXIS));
 			{
-				 chckbx = new JCheckBox("无需再提示");
+				 chckbx = new JCheckBox(i18n("mesDlgAddEdge.nomore"));
 				buttonPane.add(chckbx);
 			}
 			{

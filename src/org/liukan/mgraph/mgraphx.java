@@ -20,8 +20,9 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.SQLException;
 import java.util.ArrayList;
-
+import java.util.Locale;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 import javax.swing.BorderFactory;
 import javax.swing.CellRendererPane;
@@ -34,7 +35,7 @@ import javax.swing.border.BevelBorder;
 
 //import org.liukan.mgraph.CustomCanvas.SwingCanvas;
 import org.liukan.mgraph.ui.editEdge;
-import org.liukan.mgraph.ui.editNote;
+import org.liukan.mgraph.ui.editNode;
 import org.liukan.mgraph.util.dbIO;
 import org.liukan.mgraph.util.strParts;
 import org.liukan.mgraph.util.strUtil;
@@ -103,6 +104,12 @@ public class mgraphx extends JPanel {
 
 	private int edgeWidth;
 
+	private boolean multiLineNode;
+
+	private Locale currLocale;
+
+	private ResourceBundle messagesRes;
+
 	/**
 	 * Gets the graph x.
 	 *
@@ -119,7 +126,7 @@ public class mgraphx extends JPanel {
 	 * @param _nodeFontSize 设置节点标签的字体大小
 	 * @param _edgeWidth 设置边宽度
 	 */
-	public void setupGraphStyle(int _edgeFontSize, int _nodeFontSize,int _edgeWidth){
+	public void setupGraphStyle(int _edgeFontSize, int _nodeFontSize,int _edgeWidth,boolean _multiLineNode){
 		mxStylesheet stylesheet = new mxStylesheet();
 		edgeFontSize=_edgeFontSize;
 		nodeFontSize=_nodeFontSize;
@@ -127,9 +134,10 @@ public class mgraphx extends JPanel {
 		mxConstants.DEFAULT_FONTSIZE = edgeFontSize;
 		setupGraph(stylesheet);
 		graph.setStylesheet(stylesheet);
+		multiLineNode=_multiLineNode;
 	}
 	public void setupGraphStyle(int _edgeFontSize, int _nodeFontSize){
-		setupGraphStyle(_edgeFontSize,_nodeFontSize,2);
+		setupGraphStyle(_edgeFontSize,_nodeFontSize,2,true);
 	}
 	/**
 	 * Sets the up graph.
@@ -175,10 +183,13 @@ public class mgraphx extends JPanel {
 	 * @param _nodesConnectable 设置是否可以通过鼠标直接点击节点添加边
 	 *  
 	 */
-	public mgraphx(boolean _nodesConnectable){
-		this(_nodesConnectable,22,45,false);
+	public mgraphx(boolean _nodesConnectable){	
+		this(_nodesConnectable,22,45,false,Locale.getDefault());
+		currLocale =Locale.getDefault();
 	}
-	
+	private String i18n(String s){
+		return messagesRes.getString(s);
+	}
 	/**
 	 * mgraphx 构造函数.
 	 *
@@ -189,8 +200,12 @@ public class mgraphx extends JPanel {
 	 * 
 	 */
 	public mgraphx(boolean _nodesConnectable,int _edgeFontSize, int _nodeFontSize
-			,boolean _centerNode) {
+			,boolean _centerNode,Locale _currLocale) {
 		super();
+		currLocale=_currLocale;
+		messagesRes = ResourceBundle.getBundle("org.liukan.mgraph.ui.i18n.MessagesBundle", currLocale);
+		//System.out.println(i18n("addEdge"));
+		multiLineNode=true;
 		centerNode=_centerNode;
 		edgeFontSize=_edgeFontSize;
 		nodeFontSize=_nodeFontSize;
@@ -268,7 +283,7 @@ public class mgraphx extends JPanel {
 								selectedNodeNum++;
 								tmpCellList.add(mc);
 								if(selectedNodeNum==2){
-									editEdge dialog = new editEdge(graph,tmpCellList);	
+									editEdge dialog = new editEdge(graph,tmpCellList,messagesRes);	
 									final Toolkit toolkit = Toolkit.getDefaultToolkit();
 									final Dimension screenSize = toolkit.getScreenSize();
 									final int x = (screenSize.width - dialog.getWidth()) / 2;
@@ -298,7 +313,7 @@ public class mgraphx extends JPanel {
 					}
 				} else {
 					if(mouseModeAddNode){
-						editNote dialog = new editNote();
+						editNode dialog = new editNode(multiLineNode,messagesRes);
 						final Toolkit toolkit = Toolkit.getDefaultToolkit();
 						final Dimension screenSize = toolkit.getScreenSize();
 						final int x = (screenSize.width - dialog.getWidth()) / 2;
@@ -724,7 +739,7 @@ public class mgraphx extends JPanel {
 	 */
 	public static void main(String[] args) {
 		JFrame frame = new JFrame();
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.setLayout(new BorderLayout());
 		JPanel p = new JPanel(new BorderLayout());
 		mgraphx c = new mgraphx();

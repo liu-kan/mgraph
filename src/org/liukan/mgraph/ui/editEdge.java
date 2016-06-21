@@ -31,6 +31,7 @@ import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.ResourceBundle;
 import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -57,17 +58,19 @@ public class editEdge extends JDialog {
 	public boolean cancel;
 	
 	/** The action. */
-	private final Action action = new SwingAction();
+	private final Action action;
 	
 	/** The chckbx. */
 	public JCheckBox chckbx ;
+
+	private ResourceBundle messagesRes;
 	
 	/**
 	 * Launch the application.
 	 *
 	 * @param args the arguments
 	 */
-	public static void main(String[] args) {
+	/*public static void main(String[] args) {
 		try {
 			editEdge dialog = new editEdge(null,null);
 			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
@@ -75,16 +78,20 @@ public class editEdge extends JDialog {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}*/
+	private String i18n(String s){
+		return messagesRes.getString(s);
 	}
-
 	/**
 	 * Create the dialog.
 	 *
 	 * @param graph the graph
 	 * @param tmpCellList the tmp cell list
 	 */
-	public editEdge(mxGraph graph, ArrayList<mxCell> tmpCellList) {
-		setTitle("编辑 边");
+	public editEdge(mxGraph graph, ArrayList<mxCell> tmpCellList,ResourceBundle messagesRes) {
+		this.messagesRes=messagesRes;
+		action = new SwingAction(messagesRes);
+		setTitle(i18n("editEdge.addEdge"));
 		cancel=false;
 		setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
 		setBounds(100, 100, 560, 243);
@@ -107,7 +114,7 @@ public class editEdge extends JDialog {
 			contentPanel.add(panelDir, gbc_panelDir);
 			panelDir.setLayout(new GridLayout(0, 1, 0, 0));
 			{
-				JLabel lblNewLabel = new JLabel("选择起点");
+				JLabel lblNewLabel = new JLabel(i18n("editEdge.chooseStart"));
 				panelDir.add(lblNewLabel);
 				String ss="";
 				String es=ss;
@@ -142,8 +149,9 @@ public class editEdge extends JDialog {
 			gbl_panelCont.rowWeights = new double[]{0.0, Double.MIN_VALUE};
 			panelCont.setLayout(gbl_panelCont);
 			{
-				chckbx = new JCheckBox("编辑连接权重(可输入浮点数)");
+				chckbx = new JCheckBox(i18n("editEdge.editLabel"));
 				chckbx.setAction(action);
+				chckbx.setSelected(true);
 				GridBagConstraints gbc_chckbx = new GridBagConstraints();
 				gbc_chckbx.anchor = GridBagConstraints.WEST;
 				gbc_chckbx.fill = GridBagConstraints.VERTICAL;
@@ -154,8 +162,8 @@ public class editEdge extends JDialog {
 			}
 			{
 				textField = new JTextField();
-				textField.setText("1");
-				textField.setEditable(false);
+				textField.setText("");
+				textField.setEditable(true);
 				GridBagConstraints gbc_textField = new GridBagConstraints();
 				gbc_textField.fill = GridBagConstraints.BOTH;
 				gbc_textField.gridx = 1;
@@ -169,25 +177,25 @@ public class editEdge extends JDialog {
 			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
 			getContentPane().add(buttonPane, BorderLayout.SOUTH);
 			{
-				JButton okButton = new JButton("确认");
+				JButton okButton = new JButton(i18n("ok"));
 				okButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						dispose();
 					}
 				});
-				okButton.setActionCommand("OK");
+				//okButton.setActionCommand("OK");
 				buttonPane.add(okButton);
 				getRootPane().setDefaultButton(okButton);
 			}
 			{
-				JButton cancelButton = new JButton("取消");
+				JButton cancelButton = new JButton(i18n("cancel"));
 				cancelButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						cancel=true;
 						dispose();
 					}
 				});
-				cancelButton.setActionCommand("Cancel");
+				//cancelButton.setActionCommand("Cancel");
 				buttonPane.add(cancelButton);
 			}
 		}
@@ -198,12 +206,16 @@ public class editEdge extends JDialog {
 	 */
 	private class SwingAction extends AbstractAction {
 		
+		private ResourceBundle messagesRes;
+
 		/**
 		 * Instantiates a new swing action.
+		 * @param messagesRes 
 		 */
-		public SwingAction() {
-			putValue(NAME, "编辑连接权重(可输入浮点数)");
-			putValue(SHORT_DESCRIPTION, "如果边的权重不为1，可勾选编辑");
+		public SwingAction(ResourceBundle messagesRes) {
+			this.messagesRes=messagesRes;
+			putValue(NAME, i18n("editEdge.editLabel"));
+			//putValue(SHORT_DESCRIPTION, "如果边的权重不为1，可勾选编辑");
 		}
 		
 		/* (non-Javadoc)
