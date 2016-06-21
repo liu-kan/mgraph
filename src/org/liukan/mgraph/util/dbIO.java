@@ -95,7 +95,50 @@ public class dbIO {
 		      //System.exit(0);
 		    }
 	}
-	
+	/**
+	 * 删除图像
+	 * @param gid 图像id
+	 * @return 成功与否
+	 * @throws SQLException
+	 */
+	public boolean delGinDB(int gid) throws SQLException{
+		boolean rv=false;
+		if(gid<0)
+			return rv;		
+		try {
+			c.setAutoCommit(false);				
+			stmt=c.createStatement();
+			PreparedStatement statement=null;			
+				ResultSet rs = stmt.executeQuery( "select * FROM graphs where id="+gid+";" );				
+				if (!rs.isBeforeFirst() ) {  
+					return rv;					
+				} else{					
+					String sql = "DELETE FROM graphs WHERE id=?";			 
+					statement = c.prepareStatement(sql);
+					statement.setInt(1, gid);			 
+					statement.executeUpdate();
+					sql = "DELETE FROM edges WHERE gid=?";			 
+					statement = c.prepareStatement(sql);
+					statement.setInt(1, gid);			 
+					statement.executeUpdate();
+					sql = "DELETE FROM nodes WHERE gid=?";			 
+					statement = c.prepareStatement(sql);
+					statement.setInt(1, gid);			 
+					statement.executeUpdate();		
+					rv=true;
+				}
+			}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		    c.rollback();
+		}
+		finally{
+			c.setAutoCommit(true);
+			stmt.close();			
+		}
+		return rv;
+	}
 	/**
 	 * 保存图像到数据库.
 	 *
@@ -107,8 +150,7 @@ public class dbIO {
 		if(gs.id<0)
 			return gs.id;		
 		try {
-			c.setAutoCommit(false);
-			
+			c.setAutoCommit(false);			
 			stmt=c.createStatement();
 			PreparedStatement statement=null;
 			if(gs.id==0){
@@ -204,9 +246,10 @@ public class dbIO {
 		catch(Exception e)
 		{
 			e.printStackTrace();
-		   c.rollback();
+		    c.rollback();
 		}
 		finally{
+			c.setAutoCommit(true);
 			stmt.close();
 		}
 		return gs.id;

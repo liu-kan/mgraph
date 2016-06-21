@@ -231,7 +231,7 @@ public class mgraphxEx extends JPanel
 				 try {
 				    	dbIO dbio=new dbIO("org.sqlite.JDBC","jdbc:sqlite:db.sqlite",null,null);	      
 				    	//dbio.readGraph(1,c.gpanel);
-				    	c.gpanel.readGfromDB(dbio,4);
+				    	c.gpanel.readGfromDB(dbio,1);
 				    	
 				    	//c.gpanel.hLayout();
 				    	//c.gpanel.centerGraph();
@@ -253,7 +253,7 @@ public class mgraphxEx extends JPanel
 				 try {
 				    	dbIO dbio=new dbIO("org.sqlite.JDBC","jdbc:sqlite:db.sqlite",null,null);	      
 				    	//dbio.readGraph(1,c.gpanel);
-				    	c.gpanel.saveG2DB("hoho",0,dbio);
+				    	c.gpanel.saveG2DB("hoho",1,dbio);
 				    	
 				    	//c.gpanel.hLayout();
 				    	//c.gpanel.centerGraph();
@@ -268,6 +268,28 @@ public class mgraphxEx extends JPanel
 
 		});
 		panel_button.add(btnSaveButton);
+		JButton delButton = new JButton("删除");
+		delButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				 try {
+				    	dbIO dbio=new dbIO("org.sqlite.JDBC","jdbc:sqlite:db.sqlite",null,null);	      
+				    	//dbio.readGraph(1,c.gpanel);
+				    	dbio.delGinDB(1);
+				    	
+				    	//c.gpanel.hLayout();
+				    	//c.gpanel.centerGraph();
+				    	dbio.close();
+				    	//dbio=null;
+				    	//System.gc(); 
+				    } catch ( Exception e ) {
+				      System.err.println( e.getClass().getName() + ": " + e.getMessage() );
+				      System.exit(0);
+				    }
+			}
+
+		});
+		panel_button.add(delButton);
 		frame.getContentPane().add(c,BorderLayout.CENTER);
 		frame.pack();
 		//c.setSize(1000, 720);

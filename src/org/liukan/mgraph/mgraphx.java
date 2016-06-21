@@ -126,6 +126,9 @@ public class mgraphx extends JPanel {
 	 * @param _nodeFontSize 设置节点标签的字体大小
 	 * @param _edgeWidth 设置边宽度
 	 */
+	public void setupGraphStyle(int _edgeFontSize, int _nodeFontSize,int _edgeWidth){
+		setupGraphStyle(_edgeFontSize,  _nodeFontSize, _edgeWidth,true);
+	}
 	public void setupGraphStyle(int _edgeFontSize, int _nodeFontSize,int _edgeWidth,boolean _multiLineNode){
 		mxStylesheet stylesheet = new mxStylesheet();
 		edgeFontSize=_edgeFontSize;
@@ -200,9 +203,16 @@ public class mgraphx extends JPanel {
 	 * 
 	 */
 	public mgraphx(boolean _nodesConnectable,int _edgeFontSize, int _nodeFontSize
+			,boolean _centerNode){
+		this(_nodesConnectable, _edgeFontSize,  _nodeFontSize
+				, _centerNode,null);
+	}
+	public mgraphx(boolean _nodesConnectable,int _edgeFontSize, int _nodeFontSize
 			,boolean _centerNode,Locale _currLocale) {
 		super();
 		currLocale=_currLocale;
+		if(currLocale==null)
+			currLocale = Locale.getDefault();
 		messagesRes = ResourceBundle.getBundle("org.liukan.mgraph.ui.i18n.MessagesBundle", currLocale);
 		//System.out.println(i18n("addEdge"));
 		multiLineNode=true;
