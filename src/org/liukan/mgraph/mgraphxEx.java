@@ -45,6 +45,14 @@ public class mgraphxEx extends JPanel
 	private Locale currLocale;
 
 	private ResourceBundle messagesRes;
+
+	private JButton btnNewNodeButton;
+
+	private JButton btnNewEdgeButton;
+
+	private JButton btnDelButton;
+
+	private JMenuBar menuBar;
 	
 	/**
 	 * Instantiates a new mgraphx ex.<br>
@@ -91,7 +99,7 @@ public class mgraphxEx extends JPanel
 		JPanel panel_button = new JPanel();
 		add(panel_button, BorderLayout.SOUTH);
 		
-		JButton btnNewNodeButton = new JButton(messagesRes.getString("addNodeMode"));
+		btnNewNodeButton = new JButton(messagesRes.getString("addNodeMode"));
 		btnNewNodeButton.addActionListener(new ActionListener() {
 
 			@Override
@@ -109,7 +117,7 @@ public class mgraphxEx extends JPanel
 		});
 		panel_button.add(btnNewNodeButton);
 		
-		JButton btnNewEdgeButton = new JButton(messagesRes.getString("addEdge"));
+		btnNewEdgeButton = new JButton(messagesRes.getString("addEdge"));
 /**
  * 点击后可添加边		
  */
@@ -132,7 +140,7 @@ public class mgraphxEx extends JPanel
 		});
 		panel_button.add(btnNewEdgeButton);
 		
-		JButton btnDelButton = new JButton(i18n("delObj"));
+		btnDelButton = new JButton(i18n("delObj"));
 		btnDelButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {				
@@ -141,7 +149,7 @@ public class mgraphxEx extends JPanel
 		});
 		panel_button.add(btnDelButton);
 		
-		JMenuBar menuBar = new JMenuBar();
+		menuBar = new JMenuBar();
 		panel_button.add(menuBar);
 		
 		JMenu Menu = new JMenu(i18n("autoLayout"));
@@ -296,5 +304,14 @@ public class mgraphxEx extends JPanel
 		frame.setSize(600, 820);
         frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
+	}
+	@Override
+	public void setEnabled(boolean e){
+		btnNewNodeButton.setEnabled(e);
+		btnNewEdgeButton.setEnabled(e);
+		btnDelButton.setEnabled(e);
+		menuBar.setEnabled(e);
+		super.setEnabled(e);
+		
 	}
 }
