@@ -18,6 +18,12 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+
+import com.mxgraph.analysis.mxGraphAnalysis;
+import com.mxgraph.analysis.mxUnionFind;
+import com.mxgraph.view.mxGraph;
+
+import org.liukan.mgraph.ui.absEditEdge;
 import org.liukan.mgraph.ui.mesDlgAddEdge;
 import org.liukan.mgraph.util.dbIO;
 
@@ -56,14 +62,19 @@ public class mgraphxEx extends JPanel
 	private String i18n(String s){
 		return messagesRes.getString(s);
 	}
+	public mgraphxEx(Locale _currLocale,absEditEdge eedlg){
+		this(false,22,45,false,_currLocale,eedlg);
+	}
 	public mgraphxEx(Locale _currLocale){
 		this(false,22,45,false,_currLocale);
 	}
+	
 	public mgraphxEx(boolean _nodesConnectable,int _edgeFontSize, int _nodeFontSize
 			,boolean _centerNode){
 		this(_nodesConnectable, _edgeFontSize,  _nodeFontSize
 				, _centerNode,null);
 	}
+	
 	/**
 	 * mgraphxEx构造函数
 	* @param _nodesConnectable 设置是否可以通过鼠标直接点击节点添加边
@@ -74,7 +85,12 @@ public class mgraphxEx extends JPanel
 	 * @see mgraphx
 	 */
 	public mgraphxEx(boolean _nodesConnectable,int _edgeFontSize, int _nodeFontSize
-			,boolean _centerNode, Locale _currLocale)
+			,boolean _centerNode, Locale _currLocale){
+		this(_nodesConnectable, _edgeFontSize,  _nodeFontSize
+				, _centerNode,_currLocale,null);
+	}
+	public mgraphxEx(boolean _nodesConnectable,int _edgeFontSize, int _nodeFontSize
+			,boolean _centerNode, Locale _currLocale,absEditEdge eedlg)
 	{
 		super();
 		if(_currLocale==null)
@@ -85,7 +101,7 @@ public class mgraphxEx extends JPanel
 		hintAddEdge=true;
 		setLayout(new BorderLayout()); 
 		gpanel = new mgraphx(_nodesConnectable, _edgeFontSize,  _nodeFontSize
-				, _centerNode,currLocale);
+				, _centerNode,currLocale,eedlg);
 		add(gpanel, BorderLayout.CENTER);
 		
 		JPanel panel_button = new JPanel();
@@ -290,6 +306,10 @@ public class mgraphxEx extends JPanel
 
 		});
 		panel_button.add(delButton);
+
+
+
+
 		frame.getContentPane().add(c,BorderLayout.CENTER);
 		frame.pack();
 		//c.setSize(1000, 720);

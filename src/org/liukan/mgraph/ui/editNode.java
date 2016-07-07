@@ -47,8 +47,6 @@ public class editNode extends JDialog {
 	/** The rv. */
 	private static String rv=null;
 	
-	/** The semp. */
-	static Semaphore semp;
 	
 	/**
 	 * Launch the application.
@@ -96,13 +94,6 @@ public class editNode extends JDialog {
 	 */
 	public editNode(boolean newline, ResourceBundle messagesRes) {
 		
-		//semp = new Semaphore(1);
-		 /* try {
-			semp.acquire();
-		} catch (InterruptedException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}*/
 		this.messagesRes=messagesRes;
 		setTitle(i18n("editNode.inputNodeInfo"));
 		setModalityType(Dialog.ModalityType.APPLICATION_MODAL);

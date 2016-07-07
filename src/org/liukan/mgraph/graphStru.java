@@ -30,7 +30,15 @@ public class  graphStru {
 	
 	/** The edges. */
 	public LinkedList<medge> edges;
-	
+	public mnode getNode(String id){
+		int size = nodes.size();
+		for (int j = 0; j < size; j++) {
+			mnode n=nodes.get(j);
+			if(n.id.equals(id))
+				return n;
+		}
+		return null;
+	}
 	/**
 	 * 向图数据结构中添加节点.
 	 *

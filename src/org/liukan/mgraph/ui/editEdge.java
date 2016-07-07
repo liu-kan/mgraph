@@ -40,7 +40,7 @@ import javax.swing.Action;
 /**
  * The Class editEdge.
  */
-public class editEdge extends JDialog {
+public class editEdge extends absEditEdge {
 
 	/** The content panel. */
 	private final JPanel contentPanel = new JPanel();
@@ -64,6 +64,8 @@ public class editEdge extends JDialog {
 	public JCheckBox chckbx ;
 
 	private ResourceBundle messagesRes;
+
+	private JRadioButton startNode2;
 	
 	/**
 	 * Launch the application.
@@ -88,7 +90,7 @@ public class editEdge extends JDialog {
 	 * @param graph the graph
 	 * @param tmpCellList the tmp cell list
 	 */
-	public editEdge(mxGraph graph, ArrayList<mxCell> tmpCellList,ResourceBundle messagesRes) {
+	public editEdge(mxGraph graph,ResourceBundle messagesRes) {
 		this.messagesRes=messagesRes;
 		action = new SwingAction(messagesRes);
 		setTitle(i18n("editEdge.addEdge"));
@@ -118,19 +120,15 @@ public class editEdge extends JDialog {
 				panelDir.add(lblNewLabel);
 				String ss="";
 				String es=ss;
-				if(tmpCellList!=null)
-				if(tmpCellList.size()==2){
-					ss=(String)tmpCellList.get(0).getValue();
-					es=(String)tmpCellList.get(1).getValue();
-				}
-				startNode1 = new JRadioButton(ss);
+				
+				startNode1 = new JRadioButton();
 				panelDir.add(startNode1);
 				buttonGroup.add(startNode1);
 			
 				
-				JRadioButton rdbtnNewRadioButton = new JRadioButton(es);
-				buttonGroup.add(rdbtnNewRadioButton);
-				panelDir.add(rdbtnNewRadioButton);
+				startNode2 = new JRadioButton();
+				buttonGroup.add(startNode2);
+				panelDir.add(startNode2);
 				buttonGroup.clearSelection();
 				startNode1.setSelected(true);
 			}
@@ -224,5 +222,28 @@ public class editEdge extends JDialog {
 		public void actionPerformed(ActionEvent e) {
 			textField.setEditable(chckbx.isSelected());
 		}
+	}
+
+	@Override
+	public String getEdgeLabel() {
+		return textField.getText().trim();
+	}
+	@Override
+	public boolean isCanceled() {
+		return cancel;
+	}
+	@Override
+	public boolean editLabel() {
+		return chckbx.isSelected();
+	}
+	@Override
+	public boolean selectedNode1() {
+		return startNode1.isSelected();
+	}
+	@Override
+	public void setSE(String s, String e) {
+		startNode1.setText(s);
+		startNode2.setText(e);
+		startNode1.setSelected(true);
 	}
 }

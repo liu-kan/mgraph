@@ -33,6 +33,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.BevelBorder;
 
+import org.liukan.mgraph.ui.absEditEdge;
 //import org.liukan.mgraph.CustomCanvas.SwingCanvas;
 import org.liukan.mgraph.ui.editEdge;
 import org.liukan.mgraph.ui.editNode;
@@ -84,7 +85,7 @@ public class mgraphx extends JPanel {
 	
 	/** The graph. */
 	private mxGraph graph ;
-	
+	private absEditEdge editEdgeDlg;
 	/** The dy. */
 	public double dx,dy;
 	
@@ -115,7 +116,7 @@ public class mgraphx extends JPanel {
 	 *
 	 * @return the graph x
 	 */
-	private mxGraph getGraphX(){
+	public mxGraph getGraphX(){
 		return graph;
 	}
 	
@@ -208,13 +209,19 @@ public class mgraphx extends JPanel {
 				, _centerNode,null);
 	}
 	public mgraphx(boolean _nodesConnectable,int _edgeFontSize, int _nodeFontSize
-			,boolean _centerNode,Locale _currLocale) {
+			,boolean _centerNode,Locale _currLocale){
+		this(_nodesConnectable, _edgeFontSize,  _nodeFontSize
+				, _centerNode,_currLocale,null);
+	}
+	public mgraphx(boolean _nodesConnectable,int _edgeFontSize, int _nodeFontSize
+			,boolean _centerNode,Locale _currLocale,absEditEdge _editEdgeDlg) {
 		super();
+		
 		currLocale=_currLocale;
 		if(currLocale==null)
 			currLocale = Locale.getDefault();
 		messagesRes = ResourceBundle.getBundle("org.liukan.mgraph.ui.i18n.MessagesBundle", currLocale);
-		//System.out.println(i18n("addEdge"));
+		System.out.println(i18n("addEdge"));
 		multiLineNode=true;
 		centerNode=_centerNode;
 		edgeFontSize=_edgeFontSize;
@@ -280,7 +287,10 @@ public class mgraphx extends JPanel {
 		new mxRubberband(graphComponent);
 		new mxKeyboardHandler(graphComponent);
 		graphComponent.setConnectable(nodesConnectable);
-		
+		if(_editEdgeDlg==null)
+			editEdgeDlg=new editEdge(graph,messagesRes);
+		else
+			editEdgeDlg=_editEdgeDlg;
 		graphComponent.getGraphControl().addMouseListener(new MouseAdapter() {
 			public void mouseReleased(MouseEvent e) {
 				Object cell = graphComponent.getCellAt(e.getX(), e.getY());
@@ -293,25 +303,28 @@ public class mgraphx extends JPanel {
 								selectedNodeNum++;
 								tmpCellList.add(mc);
 								if(selectedNodeNum==2){
-									editEdge dialog = new editEdge(graph,tmpCellList,messagesRes);	
+									editEdgeDlg.setSE((String)tmpCellList.get(0).getValue(), 
+											(String)tmpCellList.get(1).getValue());
+									editEdgeDlg.pack();
 									final Toolkit toolkit = Toolkit.getDefaultToolkit();
 									final Dimension screenSize = toolkit.getScreenSize();
-									final int x = (screenSize.width - dialog.getWidth()) / 2;
-									final int y = (screenSize.height - dialog.getHeight()) / 2;
-									dialog.setLocation(x, y);
-									dialog.setVisible(true);				
-									if(!dialog.cancel){
-										if(dialog.startNode1.isSelected()){
+									final int x = (screenSize.width - editEdgeDlg.getWidth()) / 2;
+									final int y = (screenSize.height - editEdgeDlg.getHeight()) / 2;
+									
+									editEdgeDlg.setLocation(x, y);
+									editEdgeDlg.setVisible(true);				
+									if(!editEdgeDlg.isCanceled()){
+										if(editEdgeDlg.selectedNode1()){
 											String ls="";
-											if(dialog.chckbx.isSelected())
-												ls=dialog.textField.getText();
+											if(editEdgeDlg.editLabel())
+												ls=editEdgeDlg.getEdgeLabel();
 											addEdge(ls,
 													tmpCellList.get(0),tmpCellList.get(1));
 										}
 										else{
 											String ls="";
-											if(dialog.chckbx.isSelected())
-												ls=dialog.textField.getText();
+											if(editEdgeDlg.editLabel())
+												ls=editEdgeDlg.getEdgeLabel();
 											addEdge(ls,
 													tmpCellList.get(1),tmpCellList.get(0));
 										}
@@ -458,7 +471,8 @@ public class mgraphx extends JPanel {
 	    	e.printStackTrace();
 	    }
 		return rect;	
-	} 
+	}
+
 	/**
 	 * addNode 向图像中添加节点.自动添加节点id<br>
 	 * 如非明确知道正确的节点id尽量使用本函数，而不要使用<br>
@@ -892,7 +906,51 @@ public class mgraphx extends JPanel {
 	        addEdge( edge.label,sc, ec);
 		}
 	}
-
+	/**
+	 * 保存面板现有图像到 graphStru 结构
+	 * @param name 图的名字，可以为""
+ * @param gid 图id（必须&gt;=0）,当id&gt;0函数将覆盖数据库中原gid对应的图，当id=0函数将自动保存到新图
+	 * @return 包含图数据的 graphStru 结构
+	 */
+public graphStru saveG2graphStru(String name,int gid){
+	graphStru gs=new graphStru();
+	gs.name=name;gs.edgeFontSize=edgeFontSize;
+	gs.nodeFontSize=nodeFontSize;
+	gs.id=gid;
+	Object[] nodes = graph.getChildCells(graph.getDefaultParent(),true,false);	    
+    for( Object node:nodes){
+    	mxCell _node=(mxCell)node;
+    	mxGeometry r = _node.getGeometry();
+    	double x,y;
+    	if(centerNode){
+    		x=r.getCenterX();
+    		y=r.getCenterY();
+    	}else{
+    		x=r.getX();
+    		y=r.getY();
+    	}
+    	String label=_node.getValue().toString();
+    	String id=_node.getId();
+    	gs.addNode(id, label, x, y, gid);
+    }
+    Object[] edges = graph.getChildCells(graph.getDefaultParent(),false,true);	    
+    for( Object edge:edges){
+    	mxCell _edge=(mxCell)edge;
+    	mxICell s=_edge.getSource();
+    	String sid=s.getId(),tid=_edge.getTarget().getId(),id=_edge.getId();
+    	String label=_edge.getValue().toString();
+    	double w=1;
+    	if(label.length()>0){
+	    	try{
+	    		w=Double.parseDouble(label);
+	    	}catch(java.lang.NumberFormatException e){
+	    		w=1;
+	    	}
+    	}
+    	gs.addEdge(id, label, w, sid, tid, gid);
+    }
+    return gs;
+}
 /**
  * 保存图到数据库<br>
  * 边的标签如果可以转换成double者会被作为边的权重<br>
@@ -905,42 +963,7 @@ public class mgraphx extends JPanel {
  * @throws SQLException 抛出sql异常
  */
 	public int saveG2DB(String name,int gid,dbIO dbio) throws SQLException{
-		graphStru gs=new graphStru();
-		gs.name=name;gs.edgeFontSize=edgeFontSize;
-		gs.nodeFontSize=nodeFontSize;
-		gs.id=gid;
-		Object[] nodes = graph.getChildCells(graph.getDefaultParent(),true,false);	    
-	    for( Object node:nodes){
-	    	mxCell _node=(mxCell)node;
-	    	mxGeometry r = _node.getGeometry();
-	    	double x,y;
-	    	if(centerNode){
-	    		x=r.getCenterX();
-	    		y=r.getCenterY();
-	    	}else{
-	    		x=r.getX();
-	    		y=r.getY();
-	    	}
-	    	String label=_node.getValue().toString();
-	    	String id=_node.getId();
-	    	gs.addNode(id, label, x, y, gid);
-	    }
-	    Object[] edges = graph.getChildCells(graph.getDefaultParent(),false,true);	    
-	    for( Object edge:edges){
-	    	mxCell _edge=(mxCell)edge;
-	    	mxICell s=_edge.getSource();
-	    	String sid=s.getId(),tid=_edge.getTarget().getId(),id=_edge.getId();
-	    	String label=_edge.getValue().toString();
-	    	double w=1;
-	    	if(label.length()>0){
-		    	try{
-		    		w=Double.parseDouble(label);
-		    	}catch(java.lang.NumberFormatException e){
-		    		w=1;
-		    	}
-	    	}
-	    	gs.addEdge(id, label, w, sid, tid, gid);
-	    }
+		graphStru gs=saveG2graphStru(name,gid);
 	    int _gid=0;
 	    try{ 
 	    	_gid=dbio.saveG2DB(gs);
