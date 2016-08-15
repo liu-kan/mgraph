@@ -88,7 +88,7 @@ public class editEdge extends absEditEdge {
 	 * Create the dialog.
 	 *
 	 * @param graph the graph
-	 * @param tmpCellList the tmp cell list
+	 * @param messagesRes ResourceBundle
 	 */
 	public editEdge(mxGraph graph,ResourceBundle messagesRes) {
 		this.messagesRes=messagesRes;

@@ -111,6 +111,8 @@ public class mgraphx extends JPanel {
 
 	private ResourceBundle messagesRes;
 
+	private mxStylesheet stylesheet;
+
 	/**
 	 * Gets the graph x.
 	 *
@@ -130,7 +132,8 @@ public class mgraphx extends JPanel {
 	public void setupGraphStyle(int _edgeFontSize, int _nodeFontSize,int _edgeWidth){
 		setupGraphStyle(_edgeFontSize,  _nodeFontSize, _edgeWidth,true);
 	}
-	public void setupGraphStyle(int _edgeFontSize, int _nodeFontSize,int _edgeWidth,boolean _multiLineNode){
+	public void setupGraphStyle(int _edgeFontSize, int _nodeFontSize,int _edgeWidth,
+			boolean _multiLineNode){
 		mxStylesheet stylesheet = new mxStylesheet();
 		edgeFontSize=_edgeFontSize;
 		nodeFontSize=_nodeFontSize;
@@ -144,6 +147,18 @@ public class mgraphx extends JPanel {
 		setupGraphStyle(_edgeFontSize,_nodeFontSize,2,true);
 	}
 	/**
+	 * 当两个节点被双向连接时设置成不重叠显示
+	 * @param s true if 不想重叠
+	 */
+	public void setNoOverlapEdge(boolean s){
+		Map<String, Object> edgeStyle = stylesheet.getDefaultEdgeStyle();
+		//mxConstants.STYLE_EDGE = mxEdgeStyle.SegmentConnector	
+		if(s)
+			edgeStyle.put(mxConstants.STYLE_EDGE, mxConstants.EDGESTYLE_SEGMENT);
+		else
+			edgeStyle.put(mxConstants.STYLE_EDGE, mxConstants.EDGESTYLE_ENTITY_RELATION);
+	}
+	/**
 	 * Sets the up graph.
 	 *
 	 * @param stylesheet the new up graph
@@ -151,14 +166,12 @@ public class mgraphx extends JPanel {
 	private void setupGraph(mxStylesheet stylesheet) {
 		// graph setup
 		
+	    
 		Map<String, Object> edgeStyle = stylesheet.getDefaultEdgeStyle();
 		// edgeStyle.put(mxConstants.STYLE_NOLABEL, "1");
 		// edgeStyle.put(mxConstants.STYLE_STROKECOLOR, "000000");
-		Object styleEdge = mxConstants.EDGESTYLE_TOPTOBOTTOM;
-		//edgeStyle.put(mxConstants.STYLE_EDGE, styleEdge);
-		// edgeStyle.put(mxConstants.STYLE_SHAPE, STYLE_SHAPE);
+		//edgeStyle.put(mxConstants.STYLE_ROUNDED, true);
 		edgeStyle.put(mxConstants.STYLE_ROUNDED, "1");
-		//edgeStyle.put(mxConstants.STYLE_EDGE, mxConstants.EDGESTYLE_ENTITY_RELATION);
 		edgeStyle.put(mxConstants.STYLE_STROKEWIDTH,Integer.toString(edgeWidth));
 		// NODE STYLE
 		Map<String, Object> processStyle = stylesheet.getDefaultVertexStyle();
@@ -236,7 +249,7 @@ public class mgraphx extends JPanel {
 		tmpCellList=new ArrayList<mxCell>();
 		setLayout(new BorderLayout());
 		mxConstants.DEFAULT_FONTSIZE = edgeFontSize;
-		mxStylesheet stylesheet = new mxStylesheet();
+		stylesheet = new mxStylesheet();
 		setupGraph(stylesheet);
 		graph = new mxGraph(stylesheet) {
 			public void drawState(mxICanvas canvas, mxCellState state, boolean drawLabel) {
@@ -729,7 +742,7 @@ public class mgraphx extends JPanel {
 		Object v1=null;
 		try {
 			v1=graph.insertEdge(parent, null,ls, s, e);
-			
+			labelLayout();
 		} finally {
 			graph.getModel().endUpdate();
 		}
@@ -749,7 +762,7 @@ public class mgraphx extends JPanel {
 		Object v1=null;
 		try {
 			v1=graph.insertEdge(parent, null,ls, s, e);
-			
+			labelLayout();
 		} finally {
 			graph.getModel().endUpdate();
 		}
