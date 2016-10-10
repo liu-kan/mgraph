@@ -153,8 +153,12 @@ public class mgraphx extends JPanel {
 	public void setNoOverlapEdge(boolean s){
 		Map<String, Object> edgeStyle = stylesheet.getDefaultEdgeStyle();
 		//mxConstants.STYLE_EDGE = mxEdgeStyle.SegmentConnector	
-		if(s)
-			edgeStyle.put(mxConstants.STYLE_EDGE, mxConstants.EDGESTYLE_SEGMENT);
+		if(s){
+			//edgeStyle.put(mxConstants.STYLE_EDGE, mxConstants.EDGESTYLE_SEGMENT);
+			edgeStyle.put(mxConstants.STYLE_EDGE, mxConstants.EDGESTYLE_ORTHOGONAL);
+		    edgeStyle.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_CURVE);
+		    edgeStyle.put(mxConstants.STYLE_ENDARROW, mxConstants.ARROW_BLOCK);
+		}
 		else
 			edgeStyle.put(mxConstants.STYLE_EDGE, mxConstants.EDGESTYLE_ENTITY_RELATION);
 	}
@@ -746,6 +750,8 @@ public class mgraphx extends JPanel {
 		} finally {
 			graph.getModel().endUpdate();
 		}
+		revalidate();
+		repaint();
 		return v1;
 	}
 	
@@ -766,6 +772,8 @@ public class mgraphx extends JPanel {
 		} finally {
 			graph.getModel().endUpdate();
 		}
+		revalidate();
+		repaint();
 		return v1;
 	}
 	
